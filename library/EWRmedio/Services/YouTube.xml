@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>YouTube</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[https?://[\w\.]*?youtube\.[a-z]+/watch\?.*?v=(?P<sval1>[\w-]+)
+https?://[\w\.]*?youtube\.[a-z]+/v/(?P<sval1>[\w-]+)
+https?://youtu\.be/(?P<sval1>[\w-]+)]]></service_regex>
+  <service_playlist><![CDATA[https?://[\w\.]*?youtube\.[a-z]+/.*?list=\w{2}(?P<sval1>[\w-]+)]]></service_playlist>
+  <service_url><![CDATA[http://www.youtube.com/watch?v={serviceVAL}]]></service_url>
+  <service_callback>EWRmedio_Services_YouTube</service_callback>
+  <service_width>640</service_width>
+  <service_height>390</service_height>
+  <service_embed><![CDATA[<iframe id="ytplayer" width="100%" height="{h}"  style="max-width: {w}px" src="http://www.youtube.com/embed/{serviceVAL}?autoplay={ap10}&fs=1&rel=0&enablejsapi=1" frameborder="0"></iframe>]]></service_embed>
+  <service_local>0</service_local>
+</service>

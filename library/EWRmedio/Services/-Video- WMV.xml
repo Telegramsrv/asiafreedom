@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>-Video- WMV</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[video:(?P<sval1>.*\.(wmv))$]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[video:{serviceVAL}]]></service_url>
+  <service_callback>EWRmedio_Services_VideoWMV</service_callback>
+  <service_width>640</service_width>
+  <service_height>380</service_height>
+  <service_embed><![CDATA[<script type="text/javascript">
+$.getScript("{scriptjw}/silverlight.js")
+$.getScript("{scriptjw}/wmvplayer.js", function () {
+	var elm = document.getElementById("embed_player");
+	var src = "{scriptjw}/wmvplayer.xaml";
+	var cfg = {
+		file: "{external}/{serviceVAL}",
+		autostart: '{apTF}',
+		width: "{w}",
+		height: "{h}",
+	};
+	var ply = new jeroenwijering.Player(elm,src,cfg);
+});
+</script>]]></service_embed>
+  <service_local>1</service_local>
+</service>

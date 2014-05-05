@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="SimplePortal" title="[Extra] Portal" version_string="1.2.2" version_id="1020270" url="http://addons.extralicense.com/simpleportal/" install_callback_class="SimplePortal_Install_Controller" install_callback_method="install" uninstall_callback_class="SimplePortal_Install_Controller" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="el_portal_nodeoptions"><![CDATA[<xen:selectunit size="10" multiple="true" label="{$preparedOption.title}" name="{$fieldPrefix}[{$preparedOption.option_id}]" value="{xen:raw $preparedOption.option_value}"
+    hint="{$preparedOption.hint}">
+
+   <xen:options source="$formatParams" selected="{$preparedOption.formatParams.selected}"/>
+   <xen:explain>{xen:raw $preparedOption.explain}</xen:explain>
+   <xen:html>
+   <input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+   {xen:raw $editLink}
+   </xen:html>
+</xen:selectunit>]]></template>
+  </admin_templates>
+  <admin_template_modifications>
+    <modification template="tools_rebuild" modification_key="add simpleportalcategoryrebuild" description="add simpleportalcategoryrebuild" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<input type="hidden" name="cache" value="DailyStats" />
+</xen:form>]]></find>
+      <replace><![CDATA[$0
+
+<xen:form action="{xen:adminlink 'tools/trigger-deferred'}">
+<h2 class="subHeading">{xen:phrase el_portal_rebuild_categorycache}</h2> <xen:submitunit save="{xen:phrase rebuild_now}" /> <input type="hidden" name="cache" value="SimplePortal_Deferred_Category" /> </xen:form>]]></replace>
+    </modification>
+  </admin_template_modifications>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="container_public_params" execute_order="10" callback_class="SimplePortal_Static" callback_method="publicContainerParams" active="1" hint="" description="Hide Homelink"/>
+    <listener event_id="load_class_bb_code" execute_order="10" callback_class="SimplePortal_Listener_Bb" callback_method="extendFormatterBase" active="1" hint="XenForo_BbCode_Formatter_Base" description="extend formater base"/>
+    <listener event_id="load_class_bb_code" execute_order="10" callback_class="SimplePortal_Listener_Bb" callback_method="extendFormatterText" active="1" hint="XenForo_BbCode_Formatter_Text" description="extend formater text"/>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="SimplePortal_Listener_Controller" callback_method="extendXenforoForum" active="1" hint="XenForo_ControllerPublic_Forum" description="extend forum controller"/>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="SimplePortal_Listener_Controller" callback_method="extendThreadInlineModeration" active="1" hint="XenForo_ControllerPublic_InlineMod_Thread" description="XenForo_ControllerPublic_InlineMod_Thread"/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="SimplePortal_Listener_DataWriter" callback_method="loadClassDatawriterDiscussionThread" active="1" hint="XenForo_DataWriter_Discussion_Thread" description="extend XenForo_DataWriter_Discussion_Thread"/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="SimplePortal_Listener_DataWriter" callback_method="loadClassDatawriterAttachment" active="1" hint="XenForo_DataWriter_Attachment" description="extend XenForo_DataWriter_Attachment"/>
+    <listener event_id="load_class_model" execute_order="10" callback_class="SimplePortal_Listener_Model" callback_method="extendXenforoAttachment" active="1" hint="XenForo_Model_Attachment" description="extend XenForo_Model_Attachment"/>
+    <listener event_id="load_class_model" execute_order="10" callback_class="SimplePortal_Listener_Model" callback_method="extendThread" active="1" hint="XenForo_Model_Thread" description=""/>
+    <listener event_id="navigation_tabs" execute_order="10" callback_class="SimplePortal_Static" callback_method="insertNavtab" active="1" hint="" description=""/>
+    <listener event_id="template_create" execute_order="10" callback_class="SimplePortal_Static" callback_method="templateCreate" active="1" hint="" description=""/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups>
+    <group group_id="extra_portal" display_order="9999" debug_only="0"/>
+    <option option_id="portal_autopromoteforums" edit_format="callback" data_type="array" can_backup="1">
+      <default_value></default_value>
+      <edit_format_params>SimplePortal_Option_MultiNode::renderMultiple</edit_format_params>
+      <sub_options>*</sub_options>
+      <relation group_id="extra_portal" display_order="120"/>
+    </option>
+    <option option_id="portal_charlimit" edit_format="spinbox" data_type="positive_integer" can_backup="1">
+      <default_value>500</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="50"/>
+    </option>
+    <option option_id="portal_hometab_position" edit_format="callback" data_type="string" can_backup="1" validation_class="SimplePortal_Option_Tab" validation_method="validateOption">
+      <default_value></default_value>
+      <edit_format_params>SimplePortal_Option_Tab::renderOption</edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="310"/>
+    </option>
+    <option option_id="portal_hometab_text" edit_format="textbox" data_type="string" can_backup="1">
+      <default_value>Home</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="300"/>
+    </option>
+    <option option_id="portal_include_default_sidebar" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="1"/>
+    </option>
+    <option option_id="portal_itemsPerPage" edit_format="spinbox" data_type="positive_integer" can_backup="1">
+      <default_value>5</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="10"/>
+    </option>
+    <option option_id="portal_use_as_newspage" edit_format="onoff" data_type="string" can_backup="1">
+      <default_value></default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="110"/>
+    </option>
+    <option option_id="strip_portal_attachments" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>true</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="extra_portal" display_order="200"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups>
+      <permission_group permission_group_id="simple_portal"/>
+    </permission_groups>
+    <permissions>
+      <permission permission_group_id="simple_portal" permission_id="createCategory" permission_type="flag" default_value="unset" interface_group_id="simple_portal" display_order="1"/>
+      <permission permission_group_id="simple_portal" permission_id="promoteThreadToPortal" permission_type="flag" default_value="unset" interface_group_id="simple_portal" display_order="50"/>
+      <permission permission_group_id="simple_portal" permission_id="useCreateNew" permission_type="flag" default_value="unset" interface_group_id="simple_portal" display_order="100"/>
+    </permissions>
+    <interface_groups>
+      <interface_group interface_group_id="simple_portal" display_order="9000"/>
+    </interface_groups>
+  </permissions>
+  <phrases>
+    <phrase title="el_portal_additional_types" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Additional Content Types]]></phrase>
+    <phrase title="el_portal_categories" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Categories]]></phrase>
+    <phrase title="el_portal_change_category" version_id="1020070" version_string="1.2.0"><![CDATA[Change category]]></phrase>
+    <phrase title="el_portal_choose_category" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Choose Category]]></phrase>
+    <phrase title="el_portal_confirm_category_delete" version_id="1020070" version_string="1.2.0"><![CDATA[Confirm Deletion of Category]]></phrase>
+    <phrase title="el_portal_confirm_promotion" version_id="1020070" version_string="1.2.0"><![CDATA[Please confirm that you want to promote this thread to the portalpage]]></phrase>
+    <phrase title="el_portal_create_category" version_id="1020070" version_string="1.2.0"><![CDATA[Create New Category]]></phrase>
+    <phrase title="el_portal_create_new" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Create new...]]></phrase>
+    <phrase title="el_portal_create_new_category" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Create new Portal Category]]></phrase>
+    <phrase title="el_portal_delete_from_portal" version_id="1020070" version_string="1.2.0"><![CDATA[Remove Item from Portal Page]]></phrase>
+    <phrase title="el_portal_demote_item" version_id="1020070" version_string="1.2.0"><![CDATA[Demote items]]></phrase>
+    <phrase title="el_portal_deselect_items" version_id="1020070" version_string="1.2.0"><![CDATA[Deselect items]]></phrase>
+    <phrase title="el_portal_edit_category" version_id="1020070" version_string="1.2.0"><![CDATA[Edit Portal Category]]></phrase>
+    <phrase title="el_portal_edit_item" version_id="1020070" version_string="1.2.0"><![CDATA[Edit Portal Options ]]></phrase>
+    <phrase title="el_portal_in_category" version_id="1020070" version_string="1020070"><![CDATA[in category]]></phrase>
+    <phrase title="el_portal_link_on_frontpage" version_id="1020070" version_string="1.2.0"><![CDATA[Portalpage Options]]></phrase>
+    <phrase title="el_portal_manage_categories" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Manage Portal Categories]]></phrase>
+    <phrase title="el_portal_manage_items" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[Manage Items]]></phrase>
+    <phrase title="el_portal_none" version_id="1020032" version_string="1.2 Build2"><![CDATA[None]]></phrase>
+    <phrase title="el_portal_no_portal_items" version_id="1020070" version_string="1.2.0"><![CDATA[No Items have been found]]></phrase>
+    <phrase title="el_portal_promote" version_id="1020033" version_string="1.2 Build3"><![CDATA[Promote to Portal]]></phrase>
+    <phrase title="el_portal_promote_inlinemod" version_id="1020076" version_string="1.2.1 RC"><![CDATA[Promote to Portal]]></phrase>
+    <phrase title="el_portal_read_more" version_id="1020070" version_string="1.2.0"><![CDATA[Continue reading]]></phrase>
+    <phrase title="el_portal_rebuild_categorycache" version_id="1020070" version_string="1.2.0"><![CDATA[Rebuild Extra Portal Categories]]></phrase>
+    <phrase title="el_portal_viewing_portal" version_id="1020070" version_string="1020070"><![CDATA[Viewing Portal]]></phrase>
+    <phrase title="el_selected_items" version_id="1020032" version_string="1.2 Build2"><![CDATA[Selected items]]></phrase>
+    <phrase title="el_select_promoted_content" version_id="1020032" version_string="1.2 Build2"><![CDATA[Select promoted content]]></phrase>
+    <phrase title="inline_moderation_change_category" version_id="1020032" version_string="1.2 Build2"><![CDATA[Change category]]></phrase>
+    <phrase title="inline_moderation_demode_items" version_id="1020032" version_string="1.2 Build2"><![CDATA[Demote items]]></phrase>
+    <phrase title="moderator_log_thread_portal_add" version_id="1010032" version_string="1.1.0 Beta2"><![CDATA[Thread Promoted]]></phrase>
+    <phrase title="moderator_log_thread_portal_edit" version_id="1010032" version_string="1.1.0 Beta2"><![CDATA[Thread Promotion edited]]></phrase>
+    <phrase title="moderator_log_thread_portal_remove" version_id="1020032" version_string="1.2 Build2"><![CDATA[Thread Demoted]]></phrase>
+    <phrase title="no_perm_to_promote_item" version_id="33" version_string="1.0.0"><![CDATA[You have insufficient privileges to promote this item]]></phrase>
+    <phrase title="option_cacherebuild" version_id="1020032" version_string="1.2 Build2"><![CDATA[Cacherebuild]]></phrase>
+    <phrase title="option_cacherebuild_explain" version_id="40" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="option_group_extra_portal" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[[Extra] Portal]]></phrase>
+    <phrase title="option_group_extra_portal_description" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[]]></phrase>
+    <phrase title="option_portal_autopromoteforums" version_id="1010032" version_string="1.1.0 Beta2"><![CDATA[Auto Promote new Threads from these forums]]></phrase>
+    <phrase title="option_portal_autopromoteforums_explain" version_id="1010032" version_string="1.1.0 Beta2"><![CDATA[]]></phrase>
+    <phrase title="option_portal_charlimit" version_id="12" version_string="1.0.0 RC2"><![CDATA[Char Limit]]></phrase>
+    <phrase title="option_portal_charlimit_explain" version_id="40" version_string="1.0.0"><![CDATA[Max. number of characters to show from the content if the portalpreview bbcode wasn't used in the text]]></phrase>
+    <phrase title="option_portal_hometab_position" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[Tab Position]]></phrase>
+    <phrase title="option_portal_hometab_position_explain" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[Where do you want the navigation tab displayed?]]></phrase>
+    <phrase title="option_portal_hometab_text" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[Tab Name]]></phrase>
+    <phrase title="option_portal_hometab_text_explain" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[What do you want your navigation to be named?]]></phrase>
+    <phrase title="option_portal_include_default_sidebar" version_id="1020073" version_string="1.2.1 Dev Process"><![CDATA[Include default Forum Sidebar]]></phrase>
+    <phrase title="option_portal_include_default_sidebar_explain" version_id="1020073" version_string="1.2.1 Dev Process"><![CDATA[]]></phrase>
+    <phrase title="option_portal_itemsPerPage" version_id="12" version_string="1.0.0 RC2"><![CDATA[Items Per Page]]></phrase>
+    <phrase title="option_portal_itemsPerPage_explain" version_id="12" version_string="1.0.0 RC2"><![CDATA[]]></phrase>
+    <phrase title="option_portal_use_as_newspage" version_id="43" version_string="1.0.0"><![CDATA[Use as Newspage]]></phrase>
+    <phrase title="option_portal_use_as_newspage_explain" version_id="47" version_string="1.0.0"><![CDATA[If this option is enabled, the display order will be ignored and the items will be sorted by the date]]></phrase>
+    <phrase title="option_strip_portal_attachments" version_id="1020070" version_string="1020070"><![CDATA[Strip Inline Attachments]]></phrase>
+    <phrase title="option_strip_portal_attachments_explain" version_id="1020070" version_string="1020070"><![CDATA[]]></phrase>
+    <phrase title="permission_group_simple_portal" version_id="1020032" version_string="1.2 Build2"><![CDATA[Extra Portal]]></phrase>
+    <phrase title="permission_interface_simple_portal" version_id="1010053" version_string="1.1.0 RC3"><![CDATA[[Extra] Portal]]></phrase>
+    <phrase title="permission_simple_portal_createCategory" version_id="1020033" version_string="1.2 Build3"><![CDATA[Can Create New Category]]></phrase>
+    <phrase title="permission_simple_portal_promoteThreadToPortal" version_id="1010051" version_string="1.1.0 RC1"><![CDATA[Promote Thread to Portal]]></phrase>
+    <phrase title="permission_simple_portal_useCreateNew" version_id="1010053" version_string="1.1.0 RC3"><![CDATA[Can Use the "Create New Content" Form]]></phrase>
+    <phrase title="portal_there_are_no_categories" version_id="6" version_string="1.0.0 RC1"><![CDATA[There are no categories]]></phrase>
+    <phrase title="portal_use_first_inline_attach" version_id="6" version_string="1.0.0 RC1"><![CDATA[Show the attachment in the portalpage]]></phrase>
+    <phrase title="requested_portalcategory_not_found" version_id="12" version_string="1.0.0 RC2"><![CDATA[The requested category could not be found.]]></phrase>
+    <phrase title="select_deselect_all_items_on_this_page" version_id="1020032" version_string="1.2 Build2"><![CDATA[Select / deselect all items on this page]]></phrase>
+    <phrase title="style_property_ctrlContent_description_master" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[]]></phrase>
+    <phrase title="style_property_ctrlContent_master" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[Content Specific Settings]]></phrase>
+    <phrase title="style_property_el_portal_threadprefix_description_master" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[]]></phrase>
+    <phrase title="style_property_el_portal_threadprefix_master" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[Show Thread Prefix]]></phrase>
+    <phrase title="style_property_group_Portal_master" version_id="1020032" version_string="1.2 Build2"><![CDATA[Extra Portal]]></phrase>
+    <phrase title="style_property_group_Portal_master_desc" version_id="1020032" version_string="1.2 Build2"><![CDATA[Extra Portal Settings]]></phrase>
+    <phrase title="style_property_portalAvatar_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_portalAvatar_master" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[Show Avatar]]></phrase>
+    <phrase title="style_property_portalDate_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_portalDate_master" version_id="0" version_string="1.0.0"><![CDATA[Show Date]]></phrase>
+    <phrase title="style_property_portalShowCommentCount_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_portalShowCommentCount_master" version_id="0" version_string="1.0.0"><![CDATA[Show Comment Count]]></phrase>
+    <phrase title="style_property_portalShowViewCount_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_portalShowViewCount_master" version_id="0" version_string="1.0.0"><![CDATA[Show View Count]]></phrase>
+    <phrase title="style_property_portalSidebarShowAlways_description_master" version_id="1010053" version_string="1.1.0 RC3"><![CDATA[Sidebar will be shown always(even without any categories)]]></phrase>
+    <phrase title="style_property_portalSidebarShowAlways_master" version_id="1010053" version_string="1.1.0 RC3"><![CDATA[Show the sidebar always]]></phrase>
+    <phrase title="style_property_portalSidebarShowSidebarvisitorpanel_description_master" version_id="44" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_portalSidebarShowSidebarvisitorpanel_master" version_id="44" version_string="1.0.0"><![CDATA[Show Visitorpanel in the Sidebar]]></phrase>
+    <phrase title="style_property_portal_avatar_size_m_description_master" version_id="47" version_string="1.0.0"><![CDATA[This will use the 'm' size  for the thread creators avatar, 'Show Avatar' must be enabled]]></phrase>
+    <phrase title="style_property_portal_avatar_size_m_master" version_id="47" version_string="1.0.0"><![CDATA[Show Larger Avatar]]></phrase>
+    <phrase title="style_property_portal_imgAlign_description_master" version_id="47" version_string="1.0.0"><![CDATA[Aligns the attachment to the left in a portal message, otherwise the default position is on the right]]></phrase>
+    <phrase title="style_property_portal_imgAlign_master" version_id="47" version_string="1.0.0"><![CDATA[Align Image Left]]></phrase>
+    <phrase title="style_property_portal_maxImgWidth_description_master" version_id="9" version_string="1.0.0 RC2"><![CDATA[]]></phrase>
+    <phrase title="style_property_portal_maxImgWidth_master" version_id="9" version_string="1.0.0 RC2"><![CDATA[Max. Image Width]]></phrase>
+    <phrase title="style_property_portal_show_thread_creator_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_portal_show_thread_creator_master" version_id="0" version_string="1.0.0"><![CDATA[Show Thread Creator]]></phrase>
+    <phrase title="you_sure_you_want_to_change_cat_for_x_items" version_id="1020032" version_string="1.2 Build2"><![CDATA[Are you sure you want to change the category for {count} items?]]></phrase>
+    <phrase title="you_sure_you_want_to_demote_x_items" version_id="1020032" version_string="1.2 Build2"><![CDATA[Are you sure you want to demote {count} item(s)?]]></phrase>
+    <phrase title="you_sure_you_want_to_move_x_items_into_y_cat" version_id="1020032" version_string="1.2 Build2"><![CDATA[Are you sure you want to move {count} items into {category}]]></phrase>
+    <phrase title="you_sure_you_want_to_promote_x_items" version_id="1020033" version_string="1.2 Build3"><![CDATA[Are you sure you want to promote {count} {contentType} to portal?]]></phrase>
+  </phrases>
+  <route_prefixes>
+    <route_type type="public">
+      <prefix original_prefix="landingpage" class="SimplePortal_RoutePublic_Landingpage" build_link="none"/>
+      <prefix original_prefix="portal" class="SimplePortal_RoutePublic_Lpmanage" build_link="all"/>
+    </route_type>
+  </route_prefixes>
+  <style_properties>
+    <property property_name="portalAvatar" property_type="scalar" definition="1" group_name="Portal" title="Show Avatar" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="20" sub_group="Iteminfo"><![CDATA[1]]></property>
+    <property property_name="portalDate" property_type="scalar" definition="1" group_name="Portal" title="Show Date" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="70" sub_group="Iteminfo"><![CDATA[1]]></property>
+    <property property_name="portal_show_thread_creator" property_type="scalar" definition="1" group_name="Portal" title="Show Thread Creator" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="30" sub_group="Iteminfo"><![CDATA[1]]></property>
+    <property property_name="portalShowViewCount" property_type="scalar" definition="1" group_name="Portal" title="Show View Count" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="61" sub_group="Iteminfo"><![CDATA[1]]></property>
+    <property property_name="portalShowCommentCount" property_type="scalar" definition="1" group_name="Portal" title="Show Comment Count" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="71" sub_group="Iteminfo"><![CDATA[1]]></property>
+    <property property_name="portal_maxImgWidth" property_type="scalar" definition="1" group_name="Portal" title="Max. Image Width" description="" css_components="" scalar_type="" scalar_parameters="" display_order="190" sub_group=""><![CDATA[200]]></property>
+    <property property_name="portal_imgAlign" property_type="scalar" definition="1" group_name="Portal" title="Align Image Left" description="Aligns the attachment to the left in a portal message, otherwise the default position is on the right" css_components="" scalar_type="boolean" scalar_parameters="" display_order="200" sub_group=""><![CDATA[0]]></property>
+    <property property_name="portalSidebarShowSidebarvisitorpanel" property_type="scalar" definition="1" group_name="Portal" title="Show Visitorpanel in the Sidebar" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="10" sub_group="Sidebar"><![CDATA[1]]></property>
+    <property property_name="portal_avatar_size_m" property_type="scalar" definition="1" group_name="Portal" title="Show Larger Avatar" description="This will use the 'm' size  for the thread creators avatar, 'Show Avatar' must be enabled" css_components="" scalar_type="boolean" scalar_parameters="" display_order="25" sub_group="Iteminfo"><![CDATA[0]]></property>
+    <property property_name="portalSidebarShowAlways" property_type="scalar" definition="1" group_name="Portal" title="Show the sidebar always" description="Sidebar will be shown always(even without any categories)" css_components="text,background,border,layout,extra" scalar_type="boolean" scalar_parameters="" display_order="1" sub_group="Sidebar"><![CDATA[0]]></property>
+    <property property_name="el_portal_threadprefix" property_type="scalar" definition="1" group_name="Portal" title="Show Thread Prefix" description="" css_components="" scalar_type="boolean" scalar_parameters="" display_order="75" sub_group="Iteminfo"><![CDATA[1]]></property>
+    <property property_name="ctrlContent" property_type="scalar" definition="1" group_name="Portal" title="Content Specific Settings" description="" css_components="" scalar_type="" scalar_parameters="" display_order="1" sub_group=""><![CDATA[]]></property>
+    <group group_name="Portal" display_order="9999">
+      <title>Simple Portal</title>
+      <description>Simple Portal Settings</description>
+    </group>
+  </style_properties>
+  <templates>
+    <template title="el_portal.css" version_id="1020033" version_string="1.2 Build3"><![CDATA[{xen:helper clearfix, '#portalList'}
+
+#portalList h3
+{
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.author .avatar,
+.author .itemDate
+{
+	display: inline-block;
+	vertical-align: top;
+}
+
+.itemDate
+{
+	padding: 5px;
+}
+
+.author .date
+{
+	padding: 3px 6px
+}
+
+.author .date .username
+{
+	font-weight: bold
+}
+
+.itembit
+{
+	border-top: none !important;
+	padding-top: 0 !important;
+	margin-bottom: 10px;
+	position:relative;
+}
+
+.itembit .subHeading
+{
+	border-radius: 5px;
+}
+
+/*.itembit .date
+{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}*/
+
+.itembit .stats
+{
+	float: left;
+	line-height: 24px;
+}
+
+.itembit .message
+{
+	border-top: none !important;
+	padding-bottom: 0;
+}
+
+<xen:if is="!{xen:property portal_imgAlign}">
+	.itembit .author
+	{
+	
+	}
+<xen:else />
+	.itembit .author
+	{
+		
+	}
+</xen:if>
+
+.itembit .messageContent
+{
+	margin-top: 10px;
+}
+
+.itembit .messageText
+{
+	padding-top: 10px;
+	padding-bottom: 15px;
+	/*min-height: {xen:calc "{xen:property portal_maxImgWidth} +10"}px;*/
+}
+
+.itembit .sectionFooter
+{
+	margin-top: 10px;
+}
+
+.itembit .contentSummary
+{
+        float: left;
+        display: block;
+}
+
+.itembit .message iframe
+{
+	width: 264px;
+	height: 149px;
+}
+
+<xen:if is="!{xen:property portal_imgAlign}">
+	.itemimg
+	{
+		background: {xen:property primaryLightest};
+		float: right;
+		padding: 3px;
+		max-width: {xen:calc "{xen:property portal_maxImgWidth} -0"}px;
+		max-height: {xen:calc "{xen:property portal_maxImgWidth} -0"}px;
+		margin: 0px 10px 10px 10px;
+		border: 1px solid {xen:property primaryLighter};
+		border-radius: 3px;
+	}
+<xen:else />
+	.itemimg
+	{
+		background: {xen:property primaryLightest};
+		float: left;
+		padding: 3px;
+		max-width: {xen:calc "{xen:property portal_maxImgWidth} -0"}px;
+		max-height: {xen:calc "{xen:property portal_maxImgWidth} -0"}px;
+		margin: 0px 10px 10px 10px;
+		border: 1px solid {xen:property primaryLighter};
+		border-radius: 3px;
+	}
+</xen:if>
+
+.more
+{
+	float: right;
+}
+
+.more a
+{
+	color: {xen:property button.color};
+}
+
+.more a:hover
+{
+	text-decoration: none;
+}
+
+.portalCategoryListSidebar .categoryList li
+{
+	padding: 2px 0 3px;
+	overflow: hidden; zoom: 1;
+	font-size:15px;
+	border-bottom: 1px solid {xen:property primaryLighterStill};
+}
+
+.portalCategoryListSidebar .categoryList .selected
+{
+	font-weight: bold;
+}
+
+
+@media screen and (max-width: 364px) { .itemDate .pairsJustified { display: none; } }
+<xen:if is="{xen:property enableResponsive}">
+
+
+@media (max-width:{xen:property maxResponsiveWideWidth})
+{
+		.Responsive .itembit .avatar 
+		{
+			width: 48px;
+			height: 48px;
+		}
+}
+			
+@media (max-width:{xen:property maxResponsiveMediumWidth})
+{
+	.Responsive .itembit
+	{
+		float: none;
+		width: auto;
+	}
+	.itemDate
+	{
+		padding: 5px 10px;
+	}
+}
+
+@media (max-width:{xen:property maxResponsiveNarrowWidth})
+{
+	.itemDate
+	{
+		padding: 10px 5px 10px 10px;
+	}
+    	.itemDate .pairsJustified
+    	{
+		
+    	}
+    	.itembit .bbCodeBlock pre, .bbCodeBlock .code
+    	{
+    		overflow: auto;
+    	}
+    	.itemimg
+	{
+		max-width: 95px;
+	}
+}
+</xen:if>
+
+
+
+<xen:include template="el_portal_EXTRA.css" />]]></template>
+    <template title="el_portal_attachmetnchooser" version_id="1020032" version_string="1.2 Build2"><![CDATA[<xen:if is="{$attachments}">
+    <dl class="ctrlUnit" name="ctrl_inlineattach">
+        <dt>{xen:phrase attachment}</dt>
+        <dd>
+            <div style="float:left; text-align:center">
+                <a class="avatar NoOverlay">
+                    <span class="attachmentPlaceholder">{xen:phrase el_portal_none}</span>
+                </a>
+					<span>
+						<input type="radio" name="attachment_id" value="0" {xen:if '{$item.attachment_id} == 0', 'checked'} />
+					</span>
+            </div>
+            <xen:foreach loop="$attachments" value="$attachment">
+                <div style="float:left; text-align:center">
+                    <a class="avatar NoOverlay">
+                        <img class="attachmentPlaceholder" border="0" src="{$attachment.thumbnailUrl}" alt="{$attachment.filename}" />
+                    </a>
+				<span>
+					<input type="radio" name="attachment_id" value="{$attachment.attachment_id}" {xen:if '{$item.attachment_id} == {$attachment.attachment_id}', 'checked'} />
+				</span>
+                </div>
+            </xen:foreach>
+        </dd>
+    </dl>
+</xen:if> ]]></template>
+    <template title="el_portal_categories_edit" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[<xen:title>{xen:if '{$category.category_id}', '{xen:phrase el_portal_edit_category}: {$category.title}', '{xen:phrase el_portal_create_new_category}'}</xen:title>
+
+<form action="{xen:link 'portal/manage-categories/save'}" method="post" class="xenForm formOverlay">
+
+<dl class="ctrlUnit">
+			<dt><label>{xen:phrase title}:</label></dt>
+			<dd><input type="text" name="title" value="{$category.title}" class="textCtrl"/></dd>
+</dl>
+
+<dl class="ctrlUnit">
+			<dt><label>{xen:phrase display_order}:</label></dt>
+			<dd><input type="text" name="display_order" value="{$category.display_order}" class="textCtrl"/></dd>
+</dl>
+
+<dl class="ctrlUnit">
+			<dt><label for="ctrl_style_id">{xen:phrase style}:</label></dt>
+			<dd>
+				<select name="style_id" class="textCtrl OptOut" id="ctrl_style_id" autofocus="on">
+					<option value="0">({xen:phrase use_default_style})</option>
+					<optgroup label="{xen:phrase styles}:">
+					<xen:foreach loop="$styles" key="$styleId" value="$style">
+							<option value="{$styleId}" class="{$style.depthClass}" {xen:selected '{$styleId} == {$category.style_id}'}>{$style.depthPrefix}{$style.title}{xen:if '!{$style.user_selectable}', ' *'}</option>
+					</xen:foreach>
+					</optgroup>
+				</select>
+			</dd>
+		</dl>
+
+<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" value="{xen:phrase save}" accesskey="s" class="button primary" /></dd>
+</dl>
+	<input type="hidden" name="category_id" value="{$category.category_id}" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="el_portal_categories_list" version_id="1020070" version_string="1.2.0"><![CDATA[<xen:title>{xen:phrase el_portal_manage_categories}</xen:title>
+
+<xen:set var="$newCatButton"><a href="{xen:link 'portal/manage-categories/create'}" class="callToAction OverlayTrigger"><span>{xen:phrase el_portal_create_category}</span></a></xen:set>
+<xen:if is="!{$renderedNodes}">
+	<xen:topctrl>{xen:raw $newCatButton}</xen:topctrl>
+</xen:if>
+
+<xen:if is="{$categories}">
+
+	<div class="sectionMain primaryContent">
+		<table class="dataTable">
+			<col style="width:20%;">
+			<col style="width:60%;">
+			<col style="width:20%;">
+			<tr class="dataRow">
+				<th><b>{xen:phrase display_order}</b></th>
+				<th><b>{xen:phrase title}</b></th>
+				<th></th>
+				
+			</tr>
+
+		<xen:foreach loop="$categories" value="$category">
+			<tr class="dataRow">
+				<td>{$category.display_order} </td>
+				<td>{$category.title} </td>
+				<td>
+					<a href="{xen:link 'portal/manage-categories/edit' , $category}" class="OverlayTrigger  button">{xen:phrase edit}</a>
+					<a href="{xen:link 'portal/manage-categories/delete' , $category}" class="OverlayTrigger button">{xen:phrase delete}</a>
+				</td>
+			</tr>
+		</xen:foreach>	
+		</table>
+	</div>
+<xen:else />
+{xen:phrase portal_there_are_no_categories}
+</xen:if>]]></template>
+    <template title="el_portal_categorychooser" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[<xen:if is="{$categories}">
+	<dl class="ctrlUnit ">
+		<dt>{xen:phrase el_portal_choose_category}</dt>
+		<dd>
+			<select name="category_id" class="textCtrl">
+				<option value="0">{xen:phrase none}</option>
+				<xen:foreach loop="$categories" value="$category">
+				<option value="{$category.category_id}" {xen:selected "{$category.category_id} == {$item.category_id}"}>{$category.title}</option>
+				</xen:foreach>
+			</select>
+		</dd>
+	</dl>
+</xen:if>]]></template>
+    <template title="el_portal_category_deleteconfirm" version_id="1020070" version_string="1.2.0"><![CDATA[<xen:title>{xen:phrase el_portal_confirm_category_delete} {$category.title}</xen:title>
+
+<form action="{xen:link 'portal/manage-categories/delete', $category}" method="post" class="deleteConfirmForm formOverlay">
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd>
+			<input type="submit" value="{xen:phrase delete}" class="button primary" />
+		</dd>
+	</dl>
+<input type="hidden" name="category_id" value="{$category.category_id}" />
+<input type="hidden" name="_xfConfirm" value="1" />
+<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="el_portal_confirm" version_id="1020070" version_string="1.2.0"><![CDATA[<xen:title>
+{xen:if '{$item.portalItem_id}', '{xen:phrase el_portal_edit_item}', '{xen:phrase el_portal_confirm_promotion}'}
+</xen:title>
+
+<form action="{xen:link 'portal/manage-items/edit', $content}" method="post" class="xenForm formOverlay" id="delete-post">
+
+<xen:include template="el_portal_promoteitem_fields" />
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd>
+			<input type="submit" value="{xen:if '{$item.portalItem_id}','{xen:phrase save}','{xen:phrase el_portal_promote}'}" class="button primary" />
+		</dd>
+	</dl>
+
+<input type="hidden" name="_xfConfirm" value="1" />
+<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="el_portal_create_new" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[<xen:h1>{xen:phrase el_portal_create_new}</xen:h1>
+
+<xen:require css="quick_navigation_menu.css" />
+
+<div class="section">
+	<div id="jumpMenu">
+		<div class="jumpMenuColumn">
+			<h3 class="primaryContent">Thread</h3>
+			<div class="secondaryContent">
+				<div class="blockLinksList">
+					<ul>
+						<xen:foreach loop="$forums" value="$forum">
+							<li>
+								<h3 class="nodeTitle">
+									<xen:if is="{$forum.is_forum}">
+										<a href="{xen:link forums/create-thread, $forum}"></xen:if>{xen:string repeat, '&nbsp; &nbsp; ', $forum.depth}{$forum.title}<xen:if is="{$forum.is_forum}"></a></xen:if>
+								</h3>
+								{xen:raw $forum.description}<br />
+							</li>
+						</xen:foreach>
+
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="jumpMenuColumn">
+			<h3 class="primaryContent">{xen:phrase el_portal_additional_types}</h3>
+			<div class="secondaryContent nodeList">
+				<ol class="blockLinksList">
+<xen:hook name="extraportal_add_content">
+	<xen:foreach loop="$additionalTypes" key="$title" value="$url">
+						<li class="OverlayScroller">
+						<a href="{$url}">{$title}</a>
+						</li>
+	</xen:foreach>				
+</xen:hook>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>]]></template>
+    <template title="el_portal_EXTRA.css" version_id="1020033" version_string="1.2 Build3"><![CDATA[]]></template>
+    <template title="el_portal_headinclude" version_id="1020270" version_string="1.2.2"><![CDATA[<xen:title>{xen:if $current_category, '{$current_category.title}'}</xen:title>		
+			
+<xen:if is="{$current_category}">
+    <xen:h1>{$current_category.title}</xen:h1>
+    <xen:else/>
+    <xen:h1></xen:h1>
+</xen:if>
+
+<xen:require css="el_portal.css"/>
+<xen:require css="message.css"/>
+]]></template>
+    <template title="el_portal_index" version_id="1020073" version_string="1.2.1 Dev Process"><![CDATA[<xen:include template="el_portal_headinclude"/>
+
+<xen:if is="{$current_category}">
+    <xen:navigation>
+        <xen:breadcrumb href="{xen:link portal/categories, $current_category}">
+            {$current_category.title}
+        </xen:breadcrumb>
+    </xen:navigation>
+</xen:if>
+<xen:if is="{xen:property portalSidebarShowAlways} OR {$categories} OR {$showDefaultSidebar}">
+    <xen:sidebar>
+        <xen:if is="!{xen:property portalSidebarShowSidebarvisitorpanel}">
+            <xen:container var="$noVisitorPanel">1</xen:container>
+        </xen:if>
+        <xen:if is="{$categories}">
+        <div class="section">
+            <div class="secondaryContent portalCategoryListSidebar">
+                <h3>{xen:phrase el_portal_categories}</h3>
+                <xen:comment>
+                    <a href="{xen:link portal}" class="{xen:if "{$current_category.category_id} == 0", '',
+                    ''}">Show all</a>
+                </xen:comment>
+                <div class="pairsJustified">
+                    <xen:foreach loop="$categories" value="$category">
+
+                        <dl class="discussionCount">
+                            <dt>
+                                <a href="{xen:link portal/categories, $category}"
+                                   class="{xen:if "{$current_category.category_id} == {$category.category_id}",
+                                'selected', ''}">{$category.title}</a></dt>
+                            <dd>{$category.item_count}</dd>
+                        </dl>
+                    </xen:foreach>
+                </div>
+            </div>
+        </div>
+        </xen:if>
+        
+        <xen:if is="{$showDefaultSidebar}">
+        	<xen:hook name="forum_list_sidebar">
+		<xen:include template="sidebar_online_users" />
+		
+		<!-- block: forum_stats -->
+		<div class="section">
+			<div class="secondaryContent statsList" id="boardStats">
+				<h3>{xen:phrase forum_statistics}</h3>
+				<div class="pairsJustified">
+					<dl class="discussionCount"><dt>{xen:phrase discussions}:</dt>
+						<dd>{xen:number $boardTotals.discussions}</dd></dl>
+					<dl class="messageCount"><dt>{xen:phrase messages}:</dt>
+						<dd>{xen:number $boardTotals.messages}</dd></dl>
+					<dl class="memberCount"><dt>{xen:phrase members_count}:</dt>
+						<dd>{xen:number $boardTotals.users}</dd></dl>
+					<dl><dt>{xen:phrase latest_member}:</dt>
+						<dd><xen:username user="$boardTotals.latestUser" /></dd></dl>
+					<!-- slot: forum_stats_extra -->
+				</div>
+			</div>
+		</div>
+		<!-- end block: forum_stats -->
+		
+		
+		
+	</xen:hook>
+	</xen:if>
+        
+    </xen:sidebar>
+</xen:if>
+
+
+<xen:hook name="extraportal_top_above_nav" />
+<div class="pageNavLinkGroup">
+    <div class="linkGroup"></div>
+    <xen:pagenav link="portal" page="{$page}" perpage="{$postsPerPage}" total="{$totalItems}" linkparams="{$linkparams}}" />
+</div>
+<xen:hook name="extraportal_top" />
+
+
+<div class="sectionMain">
+
+    <ol class="messageList <xen:if is='{$itemCount} == 1'> singleItem <xen:else /> moreItems</xen:if>" id="portalList"
+        data-maxheight="{xen:calc '{xen:property portal_maxImgWidth} +100'}"
+  data-masonry-options='{ "columnWidth": 500, "itemSelector": ".elportalItem",   "isFitWidth": "true",
+                "gutter": 10}'>
+        <xen:hook name="extraportal_list">
+            <xen:if is="{$items}">
+                <xen:foreach loop="$items" value="$item">
+                    <xen:hook name="extraportal_item" params="{xen:array 'item={$item}'}">
+                        {xen:raw $item.renderedTemplate}
+                    </xen:hook>
+                </xen:foreach>
+                <xen:else/>
+                <li>{xen:phrase el_portal_no_portal_items}</li>
+            </xen:if>
+        </xen:hook>
+    </ol>
+</div>
+
+<div class="pageNavLinkGroup">
+    <div class="linkGroup"></div>
+    <xen:pagenav link="portal" page="{$page}" perpage="{$postsPerPage}" total="{$totalItems}" linkparams="{$linkparams}"/>
+</div>
+<xen:hook name="extraportal_end" />
+<xen:if is="{$show_portal_branding}">
+    <div class="muted" style="text-align: center; font-size: 11px; margin: 10px;">
+        <a href="http://extralicense.com/">Extra Portal &copy; 2013-2014 ExtraLicense.com</a>
+    </div>
+</xen:if>
+
+
+<xen:edithint template="el_portal_item_bit" />
+]]></template>
+    <template title="el_portal_inlinemod" version_id="1020070" version_string="1.2.0"><![CDATA[<xen:include template="inline_mod_controls">
+	<xen:set var="$text">{xen:phrase el_promoted_content}</xen:set>
+	<xen:set var="$options">
+		<option value="demote">{xen:phrase el_portal_demote_item}</option>
+		<option value="change-category">{xen:phrase el_portal_change_category}</option>
+		<option value="deselect">{xen:phrase el_portal_deselect_items}</option>
+	</xen:set>
+	<xen:set var="$checkboxTitle">{xen:phrase select_deselect_all_items_on_this_page}</xen:set>
+	<xen:set var="$selectedItemsPhrase">{xen:phrase el_selected_items}</xen:set>
+</xen:include>]]></template>
+    <template title="el_portal_inline_mod_category" version_id="1020070" version_string="1020070"><![CDATA[<xen:title>{xen:phrase inline_moderation_change_category}</xen:title>
+
+<form action="{xen:link 'portal/inline-mod/change-category'}" method="post" class="xenForm formOverlay">
+	<p>{xen:phrase you_sure_you_want_to_change_cat_for_x_items, 'count={$itemCount}'}</p>
+	
+	<xen:include template="el_portal_categorychooser" />
+
+	
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase go}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<xen:foreach loop="$itemIds" value="$itemId">
+		<input type="hidden" name="itemId[]" value="{$itemId}" />
+	</xen:foreach>
+
+	<input type="hidden" name="_xfConfirm" value="1" />
+	<input type="hidden" name="redirect" value="{$redirect}" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="el_portal_inline_mod_demote" version_id="1020070" version_string="1.2.0"><![CDATA[<xen:title>{xen:phrase inline_moderation_demode_items}</xen:title>
+
+<form action="{xen:link 'portal/inline-mod/demote'}" method="post" class="xenForm formOverlay">
+	<p>{xen:phrase you_sure_you_want_to_demote_x_items, 'count={$itemCount}'}</p>
+	
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase el_portal_demote_item}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<xen:foreach loop="$itemIds" value="$itemId">
+		<input type="hidden" name="itemId[]" value="{$itemId}" />
+	</xen:foreach>
+
+	<input type="hidden" name="_xfConfirm" value="1" />
+	<input type="hidden" name="redirect" value="{$redirect}" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="el_portal_inline_mod_thread_promote" version_id="1020034" version_string="1.2 Build4"><![CDATA[<xen:title>{xen:phrase inline_moderation_change_category}</xen:title>
+
+<form action="{xen:link 'inline-mod/thread/promote'}" method="post" class="xenForm formOverlay">
+	<p>{xen:phrase you_sure_you_want_to_promote_x_items, 'count={$threadCount}', 'contentType={$contentType}'}</p>
+
+	<xen:include template="el_portal_categorychooser" />
+	
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase promote}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<xen:foreach loop="$threadIds" value="$itemId">
+		<input type="hidden" name="threads[]" value="{$itemId}" />
+	</xen:foreach>
+
+	<input type="hidden" name="_xfConfirm" value="1" />
+	<input type="hidden" name="redirect" value="{$redirect}" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="el_portal_item.css" version_id="1020032" version_string="1.2 Build2"><![CDATA[/* inline mod selected/checked classes */
+
+.elportalItem.InlineModChecked,
+.elportalItem.deleted.InlineModChecked,
+.elportalItem.moderated.InlineModChecked
+{
+	{xen:property inlineModChecked}
+}]]></template>
+    <template title="el_portal_items_manage" version_id="1020070" version_string="1.2.0"><![CDATA[<xen:title>{xen:phrase el_portal_manage_items}</xen:title>
+
+<xen:if is="{$items}">
+	<form action="{xen:link portal/inline-mod/switch}" method="post"
+	class="InlineModForm"
+	data-cookieName="elportal"
+	data-controls="#InlineModControls"
+	data-imodOptions="#ModerationSelect option">
+
+	<div class="sectionMain primaryContent" id="portalItems">
+		<table class="dataTable">
+			<col>
+			<xen:if is="!{$xenOptions.portal_use_as_newspage}"><col style="width:20%;"></xen:if>
+			<col style="width:40%;">
+			<col style="width:20%;">
+			<col style="width:20%;">
+			<tr class="dataRow">
+					<th></th>
+					<xen:if is="!{$xenOptions.portal_use_as_newspage}">
+						<th><b>{xen:phrase display_order}</b></th>
+					</xen:if>
+				<th><b>{xen:phrase title}</b></th>
+				<th><b>{xen:phrase field_type}</b></th>
+				<th></th>
+			</tr>
+			
+			<xen:foreach loop="$items" value="$item">
+				<xen:include template="el_portal_items_manage_item" />
+			</xen:foreach>
+		</table>
+	</div>
+	<xen:include template="el_portal_inlinemod" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	</form>
+<xen:else />
+	{xen:phrase el_portal_no_portal_items}
+</xen:if>]]></template>
+    <template title="el_portal_items_manage_item" version_id="1020070" version_string="1020070"><![CDATA[<xen:require css="el_portal_item.css" />
+
+<tr class="dataRow elportalItem" id="elportal-{$item.portalItem_id}">
+	<td>
+		<input type="checkbox" name="elportal[]" value="{$item.portalItem_id}" class="InlineModCheck" id="inlineModCheck-elportal-{$item.portalItem_id}" data-target="#elportal-{$item.portalItem_id}" title="{xen:phrase el_select_promoted_content}: {$item.data.title}" />
+	</td>
+<xen:if is="!{$xenOptions.portal_use_as_newspage}">
+	<td>{$item.display_order}</td>
+</xen:if>
+	<td>{$item.data.title}</td>
+	<td>[{$item.content_type}]</td>
+	<td>
+		<a href="{xen:link 'portal/manage-items/edit', $item } " class="OverlayTrigger button ">{xen:phrase edit}</a>
+	</td>
+</tr>]]></template>
+    <template title="el_portal_item_bit" version_id="1020071" version_string="1.2.1 Dev Process"><![CDATA[<li id="portalitem-{$item.portalItem_id}" class="elportalItem itembit {$item.content_type} {xen:if "{$item.mediaCount} > 0", 'media',''}" data-contentType="{$item.content_type}" data-contentId="{$item.content_id}" data-author="{$item.data.username}">
+	<div class="subHeading categoryStrip">
+		<h3><a href="{xen:raw $item.data.url}"><xen:if is="{xen:property el_portal_threadprefix}">{xen:helper threadPrefix, $item.data.}</xen:if>{$item.data.title}</a></h3>
+	</div>
+		<div class="message">
+
+		<xen:if hascontent="true">
+			<div class="author">
+					<xen:if is="{$item.attachment_id}"><a href="{xen:link 'attachments', {xen:array 'attachment_id={$item.attachment_id}'}}" target="_blank" class="LbTrigger" data-href="{xen:link misc/lightbox}"><img src="{xen:link 'attachments', {xen:array 'attachment_id={$item.attachment_id}'}}" alt="{$item.filename}" class="itemimg LbImage" /></a></xen:if>
+				<xen:contentcheck>
+					<xen:if is="{xen:property portalAvatar}">
+						<xen:if is="{xen:property portal_avatar_size_m}">
+							<div class="avatar"><xen:avatar user="$item.data" size="m" img="true" /></div>
+						<xen:else />
+							<div class="avatar"><xen:avatar user="$item.data" size="s" img="true" /></div>
+						</xen:if>
+							
+					</xen:if>
+						<xen:comment><xen:if is="{xen:property portal_show_thread_creator}"><dl class="pairsJustified"><dt><span class="username"><xen:username user="$item.data" title="{xen:phrase thread_starter}" /></span></dt></dl></xen:if></xen:comment>
+					<div class="itemDate">
+						<xen:if is="{xen:property portal_show_thread_creator}">{xen:phrase created_by} <span class="username"><xen:username user="$item.data" title="{xen:phrase thread_starter}" /></span></xen:if>
+						<xen:if is="{$item.categorytitle}">{xen:phrase el_portal_in_category} <a href="{xen:link portal/categories, $item}">{$item.categorytitle}</a></xen:if>
+						<xen:if is="{xen:property portalDate}"><dl class="pairsJustified"><dt><xen:datetime time="$item.data.post_date"/></dt></dl></xen:if>
+					</div>
+				</xen:contentcheck>
+			</div>
+		</xen:if>
+		
+			<article>
+				<blockquote class="messageText ugc baseHtml">
+					{xen:raw $item.messageHtml}
+				</blockquote>
+			</article>
+		</div>
+		<div class="sectionFooter">
+				<div class="contentSummary">
+					<xen:comment>
+					<a href="{xen:link 'portal/manage-items/edit', $item } " class="OverlayTrigger button ">{xen:phrase edit}</a>
+					&nbsp;				
+					</xen:comment>
+					&nbsp;
+					<xen:if is="{xen:property portalShowCommentCount} AND {$item.data.reply_count}">{xen:phrase comments}: {$item.data.reply_count}</xen:if>
+					&nbsp;
+					<xen:if is="{xen:property portalShowViewCount} AND {$item.data.view_count}">{xen:phrase views}: {$item.data.view_count}</xen:if>
+				</div>
+				<a class="more button" href="{xen:raw $item.data.url}">{xen:phrase el_portal_read_more}»</a>
+		</div>
+</li>]]></template>
+    <template title="el_portal_navbar" version_id="1020056" version_string="1.2.0 RC 6"><![CDATA[<xen:if hascontent="true">
+	<ul class="secondaryContent blockLinksList">
+		<xen:contentcheck>
+		<xen:if is="{$canManage}">
+			<li><a href="{xen:link 'portal/manage-categories'}">{xen:phrase el_portal_manage_categories}</a></li>
+			<li><a href="{xen:link 'portal/manage-items'}">{xen:phrase el_portal_manage_items}</a></li>
+		</xen:if>
+		<xen:if is="{$canCreate}">
+			<li><a href="{xen:link 'portal/create-new'}" class="OverlayTrigger">{xen:phrase el_portal_create_new}</a></li>
+		</xen:if>
+		</xen:contentcheck>
+	</ul>
+</xen:if>]]></template>
+    <template title="el_portal_promoteitem_fields" version_id="1020070" version_string="1.2.0"><![CDATA[<style>
+.attachmentPlaceholder{
+ display: block;
+width: 48px;
+height:48px;
+border: 1px solid;
+border-color: {xen:property primaryLightish};
+{xen:property avatar}
+margin:2px;
+color:black;
+}
+</style>
+
+<xen:include template="el_portal_categorychooser" />
+
+<xen:if is="!{$xenOptions.portal_use_as_newspage}">
+	<dl class="ctrlUnit ">
+			<dt>{xen:phrase display_order }</dt>
+			<dd>
+				<input type="text" class="textCtrl" id="display_order" name="display_order" value="{$item.display_order}" />
+			</dd>
+	</dl>
+</xen:if>
+<xen:include template="el_portal_attachmetnchooser" />
+
+
+
+
+<xen:if is="{$item.portalItem_id}">
+	<dl class="ctrlUnit ">
+		<dt>{xen:phrase el_portal_delete_from_portal}</dt>
+		<dd><input type="checkbox" id="ctrl_delete_item" name="delete_item" value="1" /></dd>
+	</dl>
+</xen:if>
+
+
+
+<input type="hidden" name="portalItem_id" value="{$item.portalItem_id}" />
+<input type="hidden" name="content_type" value="{$content_type}" />
+<input type="hidden" name="content_id" value="{$content_id}" />]]></template>
+    <template title="el_portal_promotelink" version_id="1020070" version_string="1.2.0"><![CDATA[<li>
+	<a href="{$promoteLink}" class="OverlayTrigger promoteLink">{xen:phrase el_portal_link_on_frontpage}</a>
+</li>]]></template>
+    <template title="el_portal_promothread" version_id="1020070" version_string="1.2.0"><![CDATA[<h3 class="textHeading">{xen:phrase el_portal_link_on_frontpage}</h3>
+<dl class="ctrlUnit">
+		<dt>{xen:phrase el_portal_promote}</dt>
+		<dd>
+			<label for="ctrl_promote_to_portal"><input type="checkbox" name="promote_to_portal" value="1" id="ctrl_promote_to_portal" class="Disabler" /></label>
+		</dd>
+</dl>
+<ul id="ctrl_promote_to_portal_Disabler">
+		<li>
+			<xen:include template="el_portal_promoteitem_fields" />
+		</li>
+</ul>]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="thread_view" modification_key="add simpleportal promotelink" description="add simpleportal promotelink" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<xen:hook name="thread_view_tools_links" params="{xen:array 'thread={$thread}'}" />]]></find>
+      <replace><![CDATA[<xen:callback class="SimplePortal_TemplateCallbacks" method="getPromoteLink" params="{xen:array 'content_type=thread', 'content_data={$thread}', 'content_id={$thread.thread_id}'}"></xen:callback>
+
+$0]]></replace>
+    </modification>
+    <modification template="thread_create" modification_key="addpromotethread" description="addpromotethread" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[</xen:hook>]]></find>
+      <replace><![CDATA[$0
+<xen:callback class="SimplePortal_TemplateCallbacks" method="getPromoteFormElement" params="{xen:array 'content_type=thread', 'content_data={$forum}', 'content_id=0}'}"></xen:callback>]]></replace>
+    </modification>
+    <modification template="inline_mod_controls_thread" modification_key="inlinemod promote" description="inlinemod promote" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<xen:if is="{$inlineModOptions.edit}"><option value="prefix">{xen:phrase apply_thread_prefix}...</option></xen:if>]]></find>
+      <replace><![CDATA[$0
+<xen:if is="{$inlineModOptions.promote}"><option value="promote">{xen:phrase el_portal_promote}</option></xen:if>]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+</addon>

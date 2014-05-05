@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>NicoVideo</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[http://[\w\.]*?nicovideo\.jp/watch/(?P<sval1>\w+)]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[http://www.nicovideo.jp/watch/{serviceVAL}]]></service_url>
+  <service_callback>EWRmedio_Services_NicoVideo</service_callback>
+  <service_width>640</service_width>
+  <service_height>395</service_height>
+  <service_embed><![CDATA[<script type="text/javascript" src="http://ext.nicovideo.jp/thumb_watch/{serviceVAL}?w={w}&h={h}"></script>]]></service_embed>
+  <service_local>0</service_local>
+</service>

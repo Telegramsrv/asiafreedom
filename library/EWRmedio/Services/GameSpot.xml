@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>GameSpot</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[http://[\w\.]*?gamespot\.[a-z]+/[\w-]+/videos/[\w-]*?(?P<sval1>\d+)/]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[http://www.gamespot.com/games/videos/{serviceVAL}/]]></service_url>
+  <service_callback>EWRmedio_Services_GameSpot</service_callback>
+  <service_width>640</service_width>
+  <service_height>360</service_height>
+  <service_embed><![CDATA[<iframe width="100%" height="{h}"  style="max-width: {w}px" src="http://www.gamespot.com/videoembed/{serviceVAL}" frameborder="0"></iframe>]]></service_embed>
+  <service_local>0</service_local>
+</service>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>Viddler</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[http://[a-z\.]*?viddler\.[a-z]+/v/(?P<sval1>\w+)]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[http://www.viddler.com/v/{serviceVAL}]]></service_url>
+  <service_callback>EWRmedio_Services_Viddler</service_callback>
+  <service_width>640</service_width>
+  <service_height>380</service_height>
+  <service_embed><![CDATA[<iframe width="100%" height="{h}"  style="max-width: {w}px" src="http://www.viddler.com/embed/{serviceVAL}?autoplay={ap10}&player=simple" frameborder="0"></iframe>]]></service_embed>
+  <service_local>0</service_local>
+</service>

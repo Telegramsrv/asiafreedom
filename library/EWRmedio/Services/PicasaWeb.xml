@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>PicasaWeb</service_name>
+  <service_media>gallery</service_media>
+  <service_regex><![CDATA[https?://picasaweb\.google\.[a-z]+/(?P<sval1>.\d+?)/(?P<album>[^\#]+)
+https?://plus\.google\.[a-z]+/photos/(?P<sval1>\d+?)/albums/(?P<sval2>\d+)]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[http://plus.google.com/photos/{serviceVAL}/albums/{serviceVAL2}]]></service_url>
+  <service_callback>EWRmedio_Services_PicasaWeb</service_callback>
+  <service_width>640</service_width>
+  <service_height>480</service_height>
+  <service_embed><![CDATA[<object type="application/x-shockwave-flash" width="{w}" height="{h}" data="http://picasaweb.google.com/s/c/bin/slideshow.swf">
+	<param name="movie" value="http://picasaweb.google.com/s/c/bin/slideshow.swf">
+	<param name="flashvars" value="RGB=0x000000&feed=http://picasaweb.google.com/data/feed/api/user/{serviceVAL}/albumid/{serviceVAL2}?alt=rss">
+	<param name="allowfullscreen" value="true">
+	<param name="allowscriptaccess" value="always">
+	<param name="allownetworking" value="all" />
+</object>]]></service_embed>
+  <service_local>0</service_local>
+</service>

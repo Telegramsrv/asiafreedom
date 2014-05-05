@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>SoundCloud</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[https?://[a-z\.]*?soundcloud\.com/(?P<sval1>[\w-]+/[\w-]+)]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[https://soundcloud.com/{serviceVAL}]]></service_url>
+  <service_callback>EWRmedio_Services_Soundcloud</service_callback>
+  <service_width>640</service_width>
+  <service_height>166</service_height>
+  <service_embed><![CDATA[<iframe width="100%" height="{h}"  style="max-width: {w}px" src="https://w.soundcloud.com/player/?url=/tracks/{serviceVAL2}?auto_play={apTF}" frameborder="0"></iframe>]]></service_embed>
+  <service_local>0</service_local>
+</service>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <service_name>Veoh</service_name>
+  <service_media>video</service_media>
+  <service_regex><![CDATA[http://[\w\.]*?veoh\.[a-z]+/.*?watch/(?P<sval1>\w+)]]></service_regex>
+  <service_playlist><![CDATA[]]></service_playlist>
+  <service_url><![CDATA[http://www.veoh.com/watch/{serviceVAL}]]></service_url>
+  <service_callback>EWRmedio_Services_Veoh</service_callback>
+  <service_width>640</service_width>
+  <service_height>385</service_height>
+  <service_embed><![CDATA[<object type="application/x-shockwave-flash" width="{w}" height="{h}" data="http://www.veoh.com/static/swf/webplayer/WebPlayer.swf">
+	<param name="movie" value="http://www.veoh.com/static/swf/webplayer/WebPlayer.swf">
+	<param name="flashvars" value="permalinkId={serviceVAL}&videoAutoPlay={ap10}">
+	<param name="allowfullscreen" value="true">
+	<param name="allowscriptaccess" value="always">
+	<param name="allownetworking" value="all" />
+</object>]]></service_embed>
+  <service_local>0</service_local>
+</service>
