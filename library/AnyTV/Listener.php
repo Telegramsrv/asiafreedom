@@ -40,7 +40,7 @@ class AnyTV_Listener
                 $params['users'] = $users;
                 break;
             case 'EWRblock_AnyTVFeaturedUsers':
-                $params['title'] = 'test123';
+                $params['title'] = 'Featured Users';
                 $params['featured'] = AnyTV_Helpers::getFeaturedUsers();
                 break;
         }

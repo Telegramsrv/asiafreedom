@@ -34,7 +34,9 @@ class AnyTV_Helpers
             WHERE `active` = 1");
 
         $userModel = XenForo_Model::create('XenForo_Model_User');
-        return $userModel->getUsersByIds($featured);
+        return $userModel->getUsersByIds(array_map(function($e) {
+            return $e['user_id'];
+        }, $featured));
     }
 }
 ?>

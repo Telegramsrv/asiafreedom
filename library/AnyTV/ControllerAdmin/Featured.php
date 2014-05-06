@@ -104,12 +104,10 @@ class AnyTV_ControllerAdmin_Featured extends XenForo_ControllerAdmin_User
 			'active' 	=> 0
 		);
 
-		$where = array(
-			'id' 		=> $id
-		);
+		$where = array('id='.$id);
 
 		$mydb = XenForo_Application::get('db');
-		$mydb->update('anytv_user_featured', $values);
+		$mydb->update('anytv_user_featured', $values, $where);
 		
 		header('Location: admin.php?anytv/feature');
 		exit;
