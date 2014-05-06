@@ -265,22 +265,27 @@ var _getUserPlaylists = function(link) {
 				html += template($('#PlaylistsTemplate').html(), params);
 			}
 
+
 			if(e.prevPageToken) {
-				html += $('<a/>', { 
+				var a = $('<a/>', { 
 					href: '#',
 					class:'PrevButton PlaylistPaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.prevPageToken),
-					text: 'Prev <'
-				})[0].outerHTML;
+					text: 'Prev'
+				});
+				a.append($('<i/>', { class: 'fa fa-arrow-left' }));
+				html += a[0].outerHTML;
 			}
 
 			if(e.nextPageToken) {
-				html += $('<a/>', {
+				var a = $('<a/>', {
 					href: '#',
 					class:'NextButton PlaylistPaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.nextPageToken),
-					text: '> Next'
-				})[0].outerHTML;
+					text: 'Next'
+				});
+				a.prepend($('<i/>', { class: 'fa fa-arrow-right' }));
+				html += a[0].outerHTML;
 			}
 
 			$('#UserPlaylists').html(html);
@@ -326,6 +331,12 @@ var getVideos = function(link, search) {
 
 			for(var i=0; i<videos.length; i++) {
 				channelId = videos[i]['snippet']['channelId'];
+				var date = videos[i]['snippet']['publishedAt'];
+				var time = date.split('T');
+				date = time[0];
+				time = time[1];
+				date = date.split('-');
+				time = time.split('.');
 				var params = {};
 				params['ID'] = videos[i]['id'] && videos[i]['id']['videoId'] 
 					? videos[i]['id']['videoId']
@@ -336,10 +347,10 @@ var getVideos = function(link, search) {
 				params['IMG'] = videos[i]['snippet']['thumbnails']['default']['url'];
 				params['LINK'] = window.location.href.replace(window.location.hash, '')+createHash(videos[i]);
 				params['TITLE'] = videos[i]['snippet']['title'];
-				params['MONTH'] = 'Mar';
-				params['DAY'] = '7';
-				params['YEAR'] = '2014';
-				params['TIME'] = '3:33AM';
+				params['MONTH'] = (numToMonth(Number.parseInt(date[1])));
+				params['DAY'] = date[2];
+				params['YEAR'] = date[0];
+				params['TIME'] = time[0];
 				params['DETAILS'] = videos[i]['snippet']['description'].replace(/\n/g, "<br />");
 				params['SEARCH'] = search;
 
@@ -349,21 +360,25 @@ var getVideos = function(link, search) {
 			}
 
 			if(e.prevPageToken) {
-				html += $('<a/>', { 
+				var a = $('<a/>', { 
 					href: '#',
 					class:'PrevButton PaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.prevPageToken),
-					text: '<'
-				})[0].outerHTML;
+					text: 'Prev'
+				});
+				a.append($('<i/>', { class: 'fa fa-arrow-left' }));
+				html += a[0].outerHTML;
 			}
 
 			if(e.nextPageToken) {
-				html += $('<a/>', {
+				var a = $('<a/>', {
 					href: '#',
 					class:'NextButton PaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.nextPageToken),
-					text: '>'
-				})[0].outerHTML;
+					text: 'Next'
+				});
+				a.prepend($('<i/>', { class: 'fa fa-arrow-right' }));
+				html += a[0].outerHTML;
 			}
 
 			$('#UserVideos').html(html).promise().done(function() {
@@ -377,6 +392,12 @@ var getVideos = function(link, search) {
 		}
 	);
 };
+
+var numToMonth = function(m) {
+	var arr = ['', 'Janary', 'Feburary', 'March', 'April', 'May', 'June', 
+		'July', 'August', 'September', 'October', 'November', 'December'];
+	return arr[m];
+}
 
 var template = function(templateHTML, data) {
 	for(var x in data) {

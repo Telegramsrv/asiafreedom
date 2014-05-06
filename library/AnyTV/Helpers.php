@@ -18,8 +18,23 @@ class AnyTV_Helpers
 	    return $value;
     }
 
+    public static function cacheBust() {
+        return date_timestamp_get(date_create());
+    }
+
     public static function cacheVideos($youtubeId) {
     	
+    }
+
+    public static function getFeaturedUsers() {
+        $mydb = XenForo_Application::get('db');
+        $featured = $mydb->fetchAll("
+            SELECT *
+            FROM `anytv_user_featured`
+            WHERE `active` = 1");
+
+        $userModel = XenForo_Model::create('XenForo_Model_User');
+        return $userModel->getUsersByIds($featured);
     }
 }
 ?>

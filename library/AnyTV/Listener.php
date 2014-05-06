@@ -12,7 +12,8 @@ class AnyTV_Listener
     {
         //Get the static variable $helperCallbacks and add a new item in the array.
         XenForo_Template_Helper_Core::$helperCallbacks += array(
-            'getarray' => array('AnyTV_Helpers', 'helperArrayGet')
+            'getarray' => array('AnyTV_Helpers', 'helperArrayGet'),
+            'cachebust' => array('AnyTV_Helpers', 'cacheBust')
         );
     }
 
@@ -37,6 +38,10 @@ class AnyTV_Listener
                 }
 
                 $params['users'] = $users;
+                break;
+            case 'EWRblock_AnyTVFeaturedUsers':
+                $params['title'] = 'test123';
+                $params['featured'] = AnyTV_Helpers::getFeaturedUsers();
                 break;
         }
     }
