@@ -6,7 +6,14 @@ var clicked;
 var globalVideos = {};
 var stateChange = true;
 
-$(document).ready(function(){
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+
+var documentReady = function(){
 	channelId = $('#UserYoutube').val();
 	if(channelId) {
 		channelId = $.grep(channelId.split('/'), function(e) { return e; });
@@ -50,7 +57,7 @@ $(document).ready(function(){
 		twtch = $.grep(twtch.split(','), function(e) { return $.grep(e.split('\n'), function(e) { return e; }) });
 		getUserStreams(twtch);
 	}
-});
+};
 
 var avblstrms = 0;
 var usrstrms;
@@ -140,12 +147,6 @@ var loadStream = function(channel) {
 }
 
 /*****************************************************************************************/
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-var player;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '460',
@@ -162,11 +163,13 @@ var playerReady = false;
 var queue = [];
 
 function onPlayerReady(event) {
+	console.log('ready');
     playerReady = true;
     for(var i=0; i<queue.length; i++) {
     	eval(queue[i]);
     }
 
+    documentReady();
     queue = [];
 }
 
@@ -198,7 +201,8 @@ var hashVideo = function(params) {
 	params.splice(0,1);
 	var video = params[0];
 	if(!playerReady){
-		queue.push("showTab($('a[data-context=media]'), 'media')");
+		if(!isShows)
+			queue.push("showTab($('a[data-context=media]'), 'media')");
 		queue.push("showVideo($('img[data-id="+video+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', 'false', 'false')");
 		return;
 	}
@@ -215,7 +219,8 @@ var hashPlaylist = function(params) {
 
 	if(!playerReady){
 		console.log('here');
-		queue.push("showTab($('a[data-context=media]'), 'media')");
+		if(!isShows)
+			queue.push("showTab($('a[data-context=media]'), 'media')");
 		queue.push("getPlaylistContents('"+playlistId+"')");
 		queue.push("showVideo($('img[data-index="+position+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', '"+playlistId+"', '"+position+"')");
 		return;
@@ -514,4 +519,5 @@ $(window).on('hashchange', function(e) {
 	}
 });
 
-$(window).trigger('hashchange');
+
+	$(window).trigger('hashchange');
