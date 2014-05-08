@@ -1,16 +1,28 @@
-var yt;
-var key = 'AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk';
 var channelId;
+var key = 'AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk';
 var value;
 var reserveClick;
 var clicked;
-var globalVideos = {};
 var stateChange = true;
 
-$(document).ready(function(){
-	yt = $('#youtubeIds').val();
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	getVideos('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&id='+yt+'&key='+key);
+var player;
+
+var documentReady = function(){
+	channelId = $('#UserYoutube').val();
+	if(channelId) {
+		channelId = $.grep(channelId.split('/'), function(e) { return e; });
+		channelId = channelId[channelId.length - 1];
+	}
+	
+	uploads = $('#UserUploads').val();
+
+	getPlaylistContents(uploads);
+	getUserPlaylists(channelId);
 
 	$('.cat_navbars .filters').click(function(e) {
 		$('.cat_navbars .SelectedLink').removeClass('SelectedLink');
@@ -22,7 +34,7 @@ $(document).ready(function(){
 		getVideos($(this).attr('data-token'));
 	});
 
-	$('body').on('click', '.ytVideo .pointer', function(e) {
+	$('body').on('click', '.listContainer.playlist .ytVideo .pointer', function(e) {
 		e.preventDefault();
 		$(this).siblings('img').click();
 	});
@@ -44,7 +56,7 @@ $(document).ready(function(){
 		twtch = $.grep(twtch.split(','), function(e) { return $.grep(e.split('\n'), function(e) { return e; }) });
 		getUserStreams(twtch);
 	}
-});
+};
 
 var avblstrms = 0;
 var usrstrms;
@@ -134,12 +146,6 @@ var loadStream = function(channel) {
 }
 
 /*****************************************************************************************/
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-var player;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '460',
@@ -153,9 +159,17 @@ function onYouTubeIframeAPIReady() {
 }
 
 var playerReady = false;
+var queue = [];
 
 function onPlayerReady(event) {
+	console.log('ready');
     playerReady = true;
+    for(var i=0; i<queue.length; i++) {
+    	eval(queue[i]);
+    }
+
+    documentReady();
+    queue = [];
 }
 
 function onPlayerStateChange(event) {
@@ -181,45 +195,42 @@ function onPlayerStateChange(event) {
 		stateChange = true;
     }
 }
-/*****************************************************************************************/
-$(window).on('hashchange', function(e) {
-	var hash = window.location.hash;
-	if(hash.split('=').length==2) {
-		var type = hash.split('=')[0];
-		value = hash.split('=')[1];
+
+var hashVideo = function(params) {
+	params.splice(0,1);
+	var video = params[0];
+	if(!playerReady){
+		if(!isShows)
+			queue.push("showTab($('a[data-context=media]'), 'media')");
+		queue.push("showVideo($('img[data-id="+video+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', 'false', 'false')");
+		return;
 	}
-
-	if(type && type=='#filter') {
-		getVideos('https://www.googleapis.com/youtube/v3/search?'
-			+'q='+value
-			+'&maxResults=20'
-			+'&channelId='+channelId+'&part=snippet'
-			+'&type=video&key='+key+'');
-		_getUserPlaylists('https://www.googleapis.com/youtube/v3/search?'
-			+'q='+value
-			+'&maxResults=20'
-			+'&channelId='+channelId+'&part=snippet'
-			+'&type=playlist&key='+key+'');
-	}
-});
-
-
-
-var getUploadedVideos = function(id) {
-	$.getJSON('https://www.googleapis.com/youtube/v3/channels?id='+id+
-		'&key='+key+
-		'&part=contentDetails', function(e){
-			var playlistId = null; 
-			if(e.items[0] && e.items[0].contentDetails &&
-				e.items[0].contentDetails.relatedPlaylists && 
-				e.items[0].contentDetails.relatedPlaylists.uploads) {
-				playlistId = e.items[0].contentDetails.relatedPlaylists.uploads;
-			}
-
-			getPlaylistContents(playlistId); 
-		}
-	);
+	//showTab($('a[data-context=media]'), 'media');
+	showVideo($('img[data-id='+video+']'), video, 'https://www.youtube.com/watch?v='+video, 'false', 'false');
 };
+
+var hashPlaylist = function(params) {
+	params.splice(0,1);
+	var playlistId = params.splice(0,1);
+	params.splice(0,1);
+	var video = params[0];
+	var position = params[1];
+
+	if(!playerReady){
+		console.log('here');
+		if(!isShows)
+			queue.push("showTab($('a[data-context=media]'), 'media')");
+		queue.push("getPlaylistContents('"+playlistId+"')");
+		queue.push("showVideo($('img[data-index="+position+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', '"+playlistId+"', '"+position+"')");
+		return;
+	}
+
+	if(player.getPlaylistId()!=playlistId) {
+		getPlaylistContents(playlistId);
+	}
+	
+	showVideo($('img[data-index='+position+']'), video, 'https://www.youtube.com/watch?v='+video, playlistId, position);
+}
 
 var getUserPlaylists = function(channelId, token) {
 	var pagination = token ? '&pageToken='+token : '';
@@ -253,26 +264,32 @@ var _getUserPlaylists = function(link) {
 				params['DAY'] = '7';
 				params['YEAR'] = '2014';
 				params['TIME'] = '3:33AM';
+				params['SEARCH'] = 0;
 
 				html += template($('#PlaylistsTemplate').html(), params);
 			}
 
+
 			if(e.prevPageToken) {
-				html += $('<a/>', { 
+				var a = $('<a/>', { 
 					href: '#',
 					class:'PrevButton PlaylistPaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.prevPageToken),
-					text: 'Prev <'
-				})[0].outerHTML;
+					text: 'Prev'
+				});
+				a.append($('<i/>', { class: 'fa fa-arrow-left' }));
+				html += a[0].outerHTML;
 			}
 
 			if(e.nextPageToken) {
-				html += $('<a/>', {
+				var a = $('<a/>', {
 					href: '#',
 					class:'NextButton PlaylistPaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.nextPageToken),
-					text: '> Next'
-				})[0].outerHTML;
+					text: 'Next'
+				});
+				a.prepend($('<i/>', { class: 'fa fa-arrow-right' }));
+				html += a[0].outerHTML;
 			}
 
 			$('#UserPlaylists').html(html);
@@ -292,7 +309,22 @@ var getPlaylistContents = function(playlistId, nextPageToken, play) {
 	}
 };
 
-var getVideos = function(link) {
+var createHash = function(data) {
+	var hash = '#!/';
+	hash = '#!/video/'+ data['id'] && data['id']['videoId'] ? data['id']['videoId'] : data['snippet']['resourceId']['videoId'];
+	if(data['snippet']['playlistId']) {	
+		hash ='#!/playlist/'+data['snippet']['playlistId']+'/video/'
+			+(data['id'] && data['id']['videoId'] ? data['id']['videoId'] : data['snippet']['resourceId']['videoId'])+'/'
+			+(data['snippet']['position']);
+	}
+
+	return hash;
+};
+
+var getVideos = function(link, search) {
+	if(!search) {
+		search = 0;
+	}
 	$.getJSON(link,
 		function(e) { 
 			var videos = e.items;
@@ -301,10 +333,14 @@ var getVideos = function(link) {
 				html = $('<div />', {class: 'empty-container'}).html('No Results Found')[0].outerHTML;
 			}
 
-			console.log(videos);
-
 			for(var i=0; i<videos.length; i++) {
 				channelId = videos[i]['snippet']['channelId'];
+				var date = videos[i]['snippet']['publishedAt'];
+				var time = date.split('T');
+				date = time[0];
+				time = time[1];
+				date = date.split('-');
+				time = time.split('.');
 				var params = {};
 				params['ID'] = videos[i]['id'] && videos[i]['id']['videoId'] 
 					? videos[i]['id']['videoId']
@@ -313,13 +349,14 @@ var getVideos = function(link) {
 				params['PLID'] = videos[i]['snippet']['playlistId'] ? videos[i]['snippet']['playlistId'] : 'false';
 				params['INDEX'] = videos[i]['snippet']['playlistId'] ? videos[i]['snippet']['position'] : 'false';
 				params['IMG'] = videos[i]['snippet']['thumbnails']['default']['url'];
-				params['LINK'] = 'https://www.youtube.com/watch?v='+params['ID'];
+				params['LINK'] = window.location.href.replace(window.location.hash, '')+createHash(videos[i]);
 				params['TITLE'] = videos[i]['snippet']['title'];
-				params['MONTH'] = 'Mar';
-				params['DAY'] = '7';
-				params['YEAR'] = '2014';
-				params['TIME'] = '3:33AM';
+				params['MONTH'] = (numToMonth(Number.parseInt(date[1])));
+				params['DAY'] = date[2];
+				params['YEAR'] = date[0];
+				params['TIME'] = time[0];
 				params['DETAILS'] = videos[i]['snippet']['description'].replace(/\n/g, "<br />");
+				params['SEARCH'] = search;
 
 				globalVideos[params['ID']] = params;
 
@@ -327,21 +364,25 @@ var getVideos = function(link) {
 			}
 
 			if(e.prevPageToken) {
-				html += $('<a/>', { 
+				var a = $('<a/>', { 
 					href: '#',
 					class:'PrevButton PaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.prevPageToken),
-					text: '<'
-				})[0].outerHTML;
+					text: 'Prev'
+				});
+				a.append($('<i/>', { class: 'fa fa-arrow-left' }));
+				html += a[0].outerHTML;
 			}
 
 			if(e.nextPageToken) {
-				html += $('<a/>', {
+				var a = $('<a/>', {
 					href: '#',
 					class:'NextButton PaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.nextPageToken),
-					text: '>'
-				})[0].outerHTML;
+					text: 'Next'
+				});
+				a.prepend($('<i/>', { class: 'fa fa-arrow-right' }));
+				html += a[0].outerHTML;
 			}
 
 			$('#UserVideos').html(html).promise().done(function() {
@@ -356,6 +397,12 @@ var getVideos = function(link) {
 	);
 };
 
+var numToMonth = function(m) {
+	var arr = ['', 'Janary', 'Feburary', 'March', 'April', 'May', 'June', 
+		'July', 'August', 'September', 'October', 'November', 'December'];
+	return arr[m];
+}
+
 var template = function(templateHTML, data) {
 	for(var x in data) {
 		templateHTML = templateHTML.replace(new RegExp('{{'+x+'}}', 'g'), data[x]);
@@ -365,6 +412,7 @@ var template = function(templateHTML, data) {
 };
 
 var showVideo = function(context, id, link, playlist, index) {
+	console.log(context);
 	$('.ytVideo.active').removeClass('active');
 	$(context).parent().addClass('active');
 	$('.VideoLoader').show();
@@ -373,10 +421,19 @@ var showVideo = function(context, id, link, playlist, index) {
 	stateChange = false;
 	if(index!=='false') {
 		src = 'http://www.youtube.com/embed/videoseries?list='+playlist+'&autoplay=1&enablejsapi=1&index='+index;
-		player.loadPlaylist({
-			list:playlist,
-			index: index
-		});
+		if(player.getPlaylistId()!=playlist) {
+			var params = {
+				list: playlist,
+				index: index
+			};
+			if(playlist == $('#UserUploads').val()) {
+				// params['listType'] = 'user_uploads';
+				// params['list'] = 'adin2344';
+			}
+			player.loadPlaylist(params);
+		} else {
+			player.playVideoAt(index);
+		}
 		
 	} else {
 		player.destroy();
@@ -395,11 +452,16 @@ var showVideo = function(context, id, link, playlist, index) {
 	baseUrl = baseUrl.replace(window.location.hash, '');
 	loadComments(link);
 	showDetails(id);
+	loadShares(link);
+};
+
+var loadShares = function(link) {
+	gapi.plus.render("gplusShare", {action: "share", href: link});
 };
 
 var showDetails = function(id) {
 	$("#mediaDetails").html(template($('#VideoDetailTemplate').html(), globalVideos[id]));
-}
+};
 
 var loadComments = function(link) {
 	var iframeLink = 'https://plusone.google.com/_/widget/render/comments?bsv&href=http%3A%2F%2Fwww.google.com&first_party_property=BLOGGER&view_type=FILTERED_POSTMOD&width='+
@@ -422,3 +484,39 @@ var updateQueryStringParameter = function (uri, key, value) {
 
 var embedLoaded = function() {
 }
+
+var capitaliseFirstLetter = function(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/*****************************************************************************************/
+$(window).on('hashchange', function(e) {
+	var hash = window.location.hash;
+	var arr = hash.split('/');
+	if(arr[0] == "#!") {
+		//videos or playlist
+		arr.splice(0,1);
+		eval("hash"+capitaliseFirstLetter(arr[0])+"(arr)");
+	}
+
+	if(hash.split('=').length==2) {
+		var type = hash.split('=')[0];
+		value = hash.split('=')[1];
+	}
+
+	if(type && type=='#filter') {
+		getVideos('https://www.googleapis.com/youtube/v3/search?'
+			+'q='+value
+			+'&maxResults=20'
+			+'&channelId='+channelId+'&part=snippet'
+			+'&type=video&key='+key+'', 1);
+		_getUserPlaylists('https://www.googleapis.com/youtube/v3/search?'
+			+'q='+value
+			+'&maxResults=20'
+			+'&channelId='+channelId+'&part=snippet'
+			+'&type=playlist&key='+key+'');
+	}
+});
+
+
+	$(window).trigger('hashchange');

@@ -38,5 +38,23 @@ class AnyTV_Helpers
             return $e['user_id'];
         }, $featured));
     }
+
+    public static function createHash($data){
+        $hash = '#!/';
+        $hash = '#!/video/'+ isset($data['id']) && isset($data['id']['videoId']) ? $data['id']['videoId'] : $data['snippet']['resourceId']['videoId'];
+        if($data['snippet']['playlistId']) { 
+            $hash ='#!/playlist/'+$data['snippet']['playlistId']+'/video/'
+                +(isset($data['id']) && isset($data['id']['videoId']) ? $data['id']['videoId'] : $data['snippet']['resourceId']['videoId'])+'/'
+                +($data['snippet']['position']);
+        }
+
+        return $hash;
+    }
+
+    public static function numToMonth($m) {
+        $arr = ['', 'Janary', 'Feburary', 'March', 'April', 'May', 'June', 
+        'July', 'August', 'September', 'October', 'November', 'December'];
+        return $arr[$m];
+    }
 }
 ?>
