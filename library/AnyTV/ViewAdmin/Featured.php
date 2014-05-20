@@ -6,7 +6,17 @@ class AnyTV_ViewAdmin_Featured extends XenForo_ViewAdmin_Base
 	{
 		if (!empty($this->_params['filterView']))
 		{
-			$this->_templateName = 'anytv_user_list_items';
+			switch($this->_params['action']) {
+				case 'users':
+					$this->_templateName = 'anytv_user_list_items';
+					break;
+				case 'videos':
+					$this->_templateName = 'anytv_video_list_items';
+					break;
+				case 'games':
+					$this->_templateName = 'anytv_game_list_items';
+					break;
+			}
 		}
 
 		return null;

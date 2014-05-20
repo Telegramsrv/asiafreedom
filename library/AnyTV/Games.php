@@ -46,6 +46,7 @@ class AnyTV_Games
 		}
 
 		$response->params['videos'] = $videos;
+		$response->params['totalVideos'] = AnyTV_Games::getVideos($games[$game]['name'], 0, 0, true);
 		$response->params['globalVideos'] = json_encode($response->params['globalVideos']);
         
         if(isset($_GET['ajax'])) {
@@ -53,7 +54,19 @@ class AnyTV_Games
         }
 	}
 
-	public static function getVideos($game, $limit, $offset) {
+	public static function responseGamesList(XenForo_ControllerPublic_Page $controller, XenForo_ControllerResponse_View $response)
+	{
+		$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? $_GET['limit'] : 6;
+		$offset = isset($_GET['offset']) && is_numeric($_GET['offset']) ? $_GET['offset'] : 0;
+		$games = AnyTV_Games::getGames();
+		$response->params['option'] = array('profile' => 'http://www.facebook.com/mcnfreedom');
+		$response->containerParams = array('bannerNew' => new Xenforo_Phrase('games'));
+		
+		$response->templateName = 'anytv_games_list_page';
+		$response->params['games'] = $games;
+	}
+
+	public static function getVideos($game, $limit=0, $offset=0, $count = false) {
 		$m = new MongoClient();
         $db = $m->selectDB("asiafreedom_youtubers");
         $videos = $db->videos
@@ -63,18 +76,40 @@ class AnyTV_Games
             	array('snippet.publishedAt'=>-1)
             )->limit($limit)
            ->skip($offset);
+
+          if($count) {
+          	return $db->videos->count(array('snippet.title' => array('$regex' => $game)));
+          }
+
         return iterator_to_array($videos);
 	}
 
-	public static function getGames() {
+	public static function getFeatured() {
+		$mydb = XenForo_Application::get('db');
+        $featured = $mydb->fetchAll("
+			SELECT *
+			FROM `anytv_game_featured`
+			WHERE `active` = 1");
+
+        return AnyTV_Games::getGames(
+        	array_map(function($data) { return $data['game_id']; }, $featured),
+        	array_map(function($data) { return $data['id']; }, $featured));
+	}
+
+	public static function getGames($filter = array(), $featuredIds = array()) {
 		$options = XenForo_Application::get('options');
 		$games = array();
 		//get the games
 		foreach ($options->anytv_categories_categories['game_id'] as $key => $value) {
+			if(count($filter) && !in_array($options->anytv_categories_categories['game_id'][$key], $filter))
+				continue;
 			$games[$options->anytv_categories_categories['game_id'][$key]] = array(
 				'id'	=> $options->anytv_categories_categories['game_id'][$key],
 				'name' 	=> $options->anytv_categories_categories['game_name'][$key],
-				'image' => $options->anytv_categories_categories['game_image'][$key]
+				'image' => $options->anytv_categories_categories['game_image'][$key],
+				'featured' => count($filter) ? 1 : 0,
+				'featured_id' => count($filter) ? 
+					$featuredIds[array_search($options->anytv_categories_categories['game_id'][$key], $filter)] : 0
 			);
 		}
 

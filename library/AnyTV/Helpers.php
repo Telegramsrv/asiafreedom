@@ -39,6 +39,34 @@ class AnyTV_Helpers
         }, $featured));
     }
 
+    public static function getFeaturedVideos() {
+        $m = new MongoClient();
+        $db = $m->selectDB("asiafreedom_youtubers");
+        $mydb = XenForo_Application::get('db');
+        $featured = $mydb->fetchAll("
+            SELECT *
+            FROM `anytv_video_featured`
+            WHERE `active` = 1");
+
+        $featuredVideos = array();
+        $featuredVideosMap = array();
+
+        foreach($featured as $data) {
+            $featuredVideos[] = new MongoID($data['video_id']);
+            $featuredVideosMap[$data['video_id']] = $data;
+        }
+
+        $featuredMongo = $db->videos->find(array('_id' => array('$in' => $featuredVideos)))->limit(12);
+        $featuredMongo = iterator_to_array($featuredMongo);
+
+        foreach ($featuredMongo as $key => &$value) {
+            $value['featured_id'] = $featuredVideosMap[$key]['id'];
+            $value['featured'] = 1;
+        }
+
+        return $featuredMongo;
+    }
+
     public static function createHash($data){
         $hash = '#!/';
         $hash = '#!/video/'+ isset($data['id']) && isset($data['id']['videoId']) ? $data['id']['videoId'] : $data['snippet']['resourceId']['videoId'];

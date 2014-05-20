@@ -3,7 +3,6 @@ var key = 'AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk';
 var value;
 var reserveClick;
 var clicked;
-var globalVideos = {};
 var stateChange = true;
 
 var tag = document.createElement('script');
@@ -22,8 +21,10 @@ var documentReady = function(){
 	
 	uploads = $('#UserUploads').val();
 
-	getPlaylistContents(uploads);
-	getUserPlaylists(channelId);
+	if(uploads)
+		getPlaylistContents(uploads);
+	if(channelId)
+		getUserPlaylists(channelId);
 
 	$('.cat_navbars .filters').click(function(e) {
 		$('.cat_navbars .SelectedLink').removeClass('SelectedLink');

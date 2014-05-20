@@ -6,14 +6,16 @@ class AnyTV_Route_AnyTV implements XenForo_Route_Interface
 	{
 		$components = explode('/', $routePath);
 		$subPrefix = strtolower(array_shift($components));
-
+		
 		$strParams = '';
 		$slice = true;
 
 		switch ($subPrefix)
 		{
-			case 'featured':	$controllerName = '_Featured'; break;
-			default:			$controllerName = '_Featured';
+			case 'featured':		$controllerName = '_Featured'; break;
+			case 'hasmedia': 		$controllerName = '_HasMedia'; break;
+			case 'user_settings':	$controllerName = '_UserSettings'; break;
+			default:				$controllerName = '_Featured';
 		}
 
 		$routePathAction = ($slice ? implode('/', array_slice($components, 0, 2)) : 'index');

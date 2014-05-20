@@ -77,6 +77,7 @@ class AnyTV_ControllerAdmin_Featured extends XenForo_ControllerAdmin_User
 		}
 
 		$viewParams = array(
+			'action' => 'users',
 			'users' => $users,
 			'totalUsers' => $totalUsers,
 			'showingAll' => $showingAll,
@@ -93,10 +94,179 @@ class AnyTV_ControllerAdmin_Featured extends XenForo_ControllerAdmin_User
 		return $this->responseView('AnyTV_ViewAdmin_Featured', 'anytv_featured', $viewParams);
 	}
 
-	//unfeatures the user
+	public function actionVideos() {
+		$m = new MongoClient();
+        $db = $m->selectDB("asiafreedom_youtubers");
+
+        $mydb = XenForo_Application::get('db');
+        $featured = $mydb->fetchAll("
+			SELECT *
+			FROM `anytv_video_featured`
+			WHERE `active` = 1");
+
+        $featuredVideos = array();
+        $featuredVideosMap = array();
+
+        foreach($featured as $data) {
+        	$featuredVideos[] = new MongoID($data['video_id']);
+        	$featuredVideosMap[$data['video_id']] = $data;
+        }
+
+        $featuredMongo = $db->videos->find(array('_id' => array('$in' => $featuredVideos)));
+        $featuredMongo = iterator_to_array($featuredMongo);
+
+        foreach ($featuredMongo as $key => &$value) {
+        	$value['featured_id'] = $featuredVideosMap[$key]['id'];
+        	$value['featured'] = 1;
+        }
+
+        $where = array(
+        	'_id' => array(
+            	'$not' => array('$in' => $featuredVideos)
+        	)
+        );
+
+        $criteria = $this->_input->filterSingle('criteria', XenForo_Input::JSON_ARRAY);
+		$criteria = $this->_filterUserSearchCriteria($criteria);
+		$order = $this->_input->filterSingle('order', XenForo_Input::STRING);
+		$direction = $this->_input->filterSingle('direction', XenForo_Input::STRING);
+		$page = $this->_input->filterSingle('page', XenForo_Input::UINT) ? $this->_input->filterSingle('page', XenForo_Input::UINT) : 1 ;
+		$videosPerPage = 20;
+		$showingAll = $this->_input->filterSingle('all', XenForo_Input::UINT);
+		if ($showingAll)
+		{
+			$page = 1;
+			$videosPerPage = 5000;
+		}
+
+		$filter = $this->_input->filterSingle('_filter', XenForo_Input::ARRAY_SIMPLE);
+		if ($filter && isset($filter['value']))
+		{
+			$where['snippet.title']  = new MongoRegex('/'.$filter['value'].'/i');
+			$filterView = true;
+		}
+		else
+		{
+			$filterView = false;
+		}
+
+
+        $totalVideos = $db->videos->count($where);
+
+		$videos = $db->videos
+            ->find(
+            	$where
+            )->sort(array('snippet.publishedAt'=>-1))->skip(($page-1)*($videosPerPage-count($featuredMongo)))->limit($videosPerPage-count($featuredMongo));
+        $videos = array_merge($featuredMongo, iterator_to_array($videos));        
+
+		$viewParams = array(
+			'action' => 'videos',
+			'videos' => $videos,
+			'totalVideos' => $totalVideos,
+			'showingAll' => $showingAll,
+			'showAll' => (!$showingAll && $totalVideos <= 5000),
+
+			'linkParams' => array('criteria' => $criteria, 'order' => $order, 'direction' => $direction),
+			'page' => $page,
+			'videosPerPage' => $videosPerPage,
+
+			'filterView' => $filterView,
+			'filterMore' => ($filterView && $totalVideos > $videosPerPage)
+		);
+
+		return $this->responseView('AnyTV_ViewAdmin_Featured', 'anytv_featured_videos', $viewParams);
+	}
+
+	public function actionGames() {
+		$games = AnyTV_Games::getGames();
+        $featuredGames = AnyTV_Games::getFeatured();
+
+        foreach ($featuredGames as $key => $value) {
+        	$games[$key] = $value;
+        }
+
+        $criteria = $this->_input->filterSingle('criteria', XenForo_Input::JSON_ARRAY);
+		$criteria = $this->_filterUserSearchCriteria($criteria);
+		$order = $this->_input->filterSingle('order', XenForo_Input::STRING);
+		$direction = $this->_input->filterSingle('direction', XenForo_Input::STRING);
+		$page = $this->_input->filterSingle('page', XenForo_Input::UINT) ? $this->_input->filterSingle('page', XenForo_Input::UINT) : 1 ;
+		$videosPerPage = 20;
+		$showingAll = $this->_input->filterSingle('all', XenForo_Input::UINT);
+		if ($showingAll)
+		{
+			$page = 1;
+			$videosPerPage = 5000;
+		}
+
+		$filter = $this->_input->filterSingle('_filter', XenForo_Input::ARRAY_SIMPLE);
+		if ($filter && isset($filter['value']))
+		{
+			$where['snippet.title']  = new MongoRegex('/'.$filter['value'].'/i');
+			$filterView = true;
+		}
+		else
+		{
+			$filterView = false;
+		}
+
+
+        $totalVideos = 100;
+
+		$videos = array();       
+
+		$viewParams = array(
+			'action' => 'games',
+			'games' => $games,
+			'totalVideos' => $totalVideos,
+			'showingAll' => $showingAll,
+			'showAll' => (!$showingAll && $totalVideos <= 5000),
+
+			'linkParams' => array('criteria' => $criteria, 'order' => $order, 'direction' => $direction),
+			'page' => $page,
+			'videosPerPage' => $videosPerPage,
+
+			'filterView' => $filterView,
+			'filterMore' => ($filterView && $totalVideos > $videosPerPage)
+		);
+
+		return $this->responseView('AnyTV_ViewAdmin_Featured', 'anytv_featured_games', $viewParams);
+	}
+
+	//unfeatures
 	public function action0() {
 		$url = $this->_input->getInput();
 		$url = array_filter(explode('/', $url['_origRoutePath']));
+
+		$method = 'unfeature'.ucfirst($url[2]);
+		$this->$method($url);
+	}
+
+	//features
+	public function action1() {
+		$url = $this->_input->getInput();
+		$url = array_filter(explode('/', $url['_origRoutePath']));
+		
+		$method = 'feature'.ucfirst($url[2]);
+		$this->$method($url);
+	}
+
+	public function featureUser($url) {
+		list($userName, $userId) = explode('.', $url[4]);
+
+		$values = array(
+			'user_id' 		=> $userId,
+			'active' 		=> 1,
+			'featured_date' => date('Y-m-d')
+		);
+
+		$mydb = XenForo_Application::get('db');
+		$mydb->insert('anytv_user_featured', $values);
+
+		header('Location: admin.php?anytv/feature');
+		exit;
+	}
+
+	public function unfeatureUser($url) {
 		list($userName, $userId) = explode('.', $url[4]);
 		$id = $url[5];
 
@@ -113,24 +283,68 @@ class AnyTV_ControllerAdmin_Featured extends XenForo_ControllerAdmin_User
 		exit;
 	}
 
-	//features the users
-	public function action1() {
-		$url = $this->_input->getInput();
-		$url = array_filter(explode('/', $url['_origRoutePath']));
-		list($userName, $userId) = explode('.', $url[4]);
+	public function featureGames($url) {
+		$id = $url[4];
 
 		$values = array(
-			'user_id' 		=> $userId,
+			'game_id' 		=> $id,
 			'active' 		=> 1,
 			'featured_date' => date('Y-m-d')
 		);
 
 		$mydb = XenForo_Application::get('db');
-		$mydb->insert('anytv_user_featured', $values);
+		$mydb->insert('anytv_game_featured', $values);
 
-		header('Location: admin.php?anytv/feature');
+		header('Location: admin.php?anytv/feature/games');
 		exit;
-		//return $this->actionIndex();
+	}
+
+	public function unfeatureGames($url) {
+		$id = $url[5];
+
+		$values = array(
+			'active' 	=> 0
+		);
+
+		$where = array('id='.$id);
+
+		$mydb = XenForo_Application::get('db');
+		$mydb->update('anytv_game_featured', $values, $where);
+		
+		header('Location: admin.php?anytv/feature/games');
+		exit;
+	}
+
+	public function featureVideo($url) {
+		$id = $url[4];
+
+		$values = array(
+			'video_id' 		=> $id,
+			'active' 		=> 1,
+			'featured_date' => date('Y-m-d')
+		);
+
+		$mydb = XenForo_Application::get('db');
+		$mydb->insert('anytv_video_featured', $values);
+
+		header('Location: admin.php?anytv/feature/videos');
+		exit;
+	}
+
+	public function unfeatureVideo($url) {
+		$id = $url[5];
+
+		$values = array(
+			'active' 	=> 0
+		);
+
+		$where = array('id='.$id);
+
+		$mydb = XenForo_Application::get('db');
+		$mydb->update('anytv_video_featured', $values, $where);
+		
+		header('Location: admin.php?anytv/feature/videos');
+		exit;
 	}
 
 	public function actionEdit() {

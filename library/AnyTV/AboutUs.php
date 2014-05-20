@@ -7,7 +7,7 @@ class AnyTV_AboutUs
 		$response->templateName = 'about_us';
 		$response->params['option'] = array('profile' => 'http://www.facebook.com/mcnfreedom');
 		$response->containerParams = array('banner' => '/images/about-us.png');
-	
+		//$respomse->selectedTabId = 'about-us';
 
 		/*
 			code for the cron job actually
