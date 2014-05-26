@@ -19,13 +19,27 @@ class AnyTV_Listener
 
     public static function templateCreate(&$templateName, array &$params, XenForo_Template_Abstract $template)
     {
+        $featuredVideosSkip = 0;
+
+        $params['featuredVideosNextPage'] = 2;
+        $params['featuredVideosPrevPage'] = 1;
+
+        if(isset($_GET['featuredVideosPage'])) {
+            $featuredVideosSkip = ($_GET['featuredVideosPage']-1)*12;
+            $params['featuredVideosNextPage'] = $_GET['featuredVideosPage']+1;
+            $params['featuredVideosPrevPage'] = $_GET['featuredVideosPage'] > 1
+                ? $_GET['featuredVideosPage'] - 1
+                : 1;
+        }
         switch($templateName) {
             case 'EWRblock_latestVideos':
                 $m = new MongoClient();
                 $db = $m->selectDB("asiafreedom_youtubers");
                 $videos = $db->videos
                     ->find(
-                    )->sort(array('snippet.publishedAt'=>-1))->limit(6);
+                    )->sort(
+                        array('snippet.publishedAt'=>-1)
+                    )->limit(6);
                 $params['videos'] = iterator_to_array($videos);
 
                 $fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
@@ -34,7 +48,10 @@ class AnyTV_Listener
 
                 $users = array();
                 foreach($values as $value) {
-                    $users[$value['value']] = array('user_id' => $value['user']['user_id'], 'username' => $value['user']['username']);
+                    $users[$value['value']] = array(
+                        'user_id' => $value['user']['user_id'],
+                        'username' => $value['user']['username']
+                    );
                 }
 
                 $params['users'] = $users;
@@ -49,6 +66,17 @@ class AnyTV_Listener
                 $videos = $db->videos
                     ->find(
                     )->sort(array('snippet.publishedAt'=>-1))->limit(12);
+                $videosPage = 1;
+                $params['prevVideosPage'] = 1;
+                $params['nextVideosPage'] = 2;
+                if(isset($_GET['videosPage'])) {
+                    $params['prevVideosPage'] = $_GET['videosPage'] > 1
+                        ? ($_GET['videosPage']-1)
+                        : 1;
+                    $params['nextVideosPage'] = $_GET['videosPage']+1;
+                    $videos = $videos->skip(($_GET['videosPage']-1)*12);
+                }
+
                 $params['videos'] = iterator_to_array($videos);
 
                 $fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
@@ -57,7 +85,10 @@ class AnyTV_Listener
 
                 $users = array();
                 foreach($values as $value) {
-                    $users[$value['value']] = array('user_id' => $value['user']['user_id'], 'username' => $value['user']['username']);
+                    $users[$value['value']] = array(
+                        'user_id' => $value['user']['user_id'],
+                        'username' => $value['user']['username']
+                    );
                 }
 
                 $options = XenForo_Application::get('options');
@@ -65,7 +96,7 @@ class AnyTV_Listener
                 $fieldsModel =  XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
                 $params['youtubers'] = $fieldsModel->getFieldValuesByFieldId('youtube_id');
                 $params['featured'] = AnyTV_Helpers::getFeaturedUsers();
-                $params['featuredVideos'] = AnyTV_Helpers::getFeaturedVideos();
+                $params['featuredVideos'] = AnyTV_Helpers::getFeaturedVideos($featuredVideosSkip);
                 $params['games'] = $games;
                 $params['users'] = $users;
 

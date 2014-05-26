@@ -23,7 +23,7 @@ class AnyTV_Helpers
     }
 
     public static function cacheVideos($youtubeId) {
-    	
+
     }
 
     public static function getFeaturedUsers() {
@@ -39,7 +39,7 @@ class AnyTV_Helpers
         }, $featured));
     }
 
-    public static function getFeaturedVideos() {
+    public static function getFeaturedVideos($skip = null) {
         $m = new MongoClient();
         $db = $m->selectDB("asiafreedom_youtubers");
         $mydb = XenForo_Application::get('db');
@@ -56,7 +56,17 @@ class AnyTV_Helpers
             $featuredVideosMap[$data['video_id']] = $data;
         }
 
-        $featuredMongo = $db->videos->find(array('_id' => array('$in' => $featuredVideos)))->limit(12);
+        $featuredMongo = $db->videos->find(
+            array(
+                '_id' => array(
+                    '$in' => $featuredVideos
+                )
+            )
+        )->limit(12);
+        if($skip) {
+            $featuredMongo = $featuredMongo->skip($skip);
+        }
+
         $featuredMongo = iterator_to_array($featuredMongo);
 
         foreach ($featuredMongo as $key => &$value) {
@@ -69,18 +79,23 @@ class AnyTV_Helpers
 
     public static function createHash($data){
         $hash = '#!/';
-        $hash = '#!/video/'+ isset($data['id']) && isset($data['id']['videoId']) ? $data['id']['videoId'] : $data['snippet']['resourceId']['videoId'];
-        if($data['snippet']['playlistId']) { 
+        $hash = '#!/video/'
+            + isset($data['id']) && isset($data['id']['videoId'])
+                ? $data['id']['videoId']
+                : $data['snippet']['resourceId']['videoId'];
+        if($data['snippet']['playlistId']) {
             $hash ='#!/playlist/'+$data['snippet']['playlistId']+'/video/'
-                +(isset($data['id']) && isset($data['id']['videoId']) ? $data['id']['videoId'] : $data['snippet']['resourceId']['videoId'])+'/'
-                +($data['snippet']['position']);
+                +(isset($data['id']) && isset($data['id']['videoId'])
+                    ? $data['id']['videoId']
+                    : $data['snippet']['resourceId']['videoId'])
+                +'/'+($data['snippet']['position']);
         }
 
         return $hash;
     }
 
     public static function numToMonth($m) {
-        $arr = ['', 'Janary', 'Feburary', 'March', 'April', 'May', 'June', 
+        $arr = ['', 'Janary', 'Feburary', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
         return $arr[$m];
     }

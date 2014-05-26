@@ -2,11 +2,14 @@
 
 class AnyTV_Route_AnyTV implements XenForo_Route_Interface
 {
-	public function match($routePath, Zend_Controller_Request_Http $request, XenForo_Router $router)
-	{
+    public function match(
+        $routePath,
+        Zend_Controller_Request_Http $request,
+        XenForo_Router $router
+    ) {
 		$components = explode('/', $routePath);
 		$subPrefix = strtolower(array_shift($components));
-		
+
 		$strParams = '';
 		$slice = true;
 
