@@ -32,6 +32,7 @@ class AnyTV_Listener
                 ? $_GET['featuredVideosPage'] - 1
                 : 1;
         }
+
         switch($templateName) {
             case 'EWRblock_latestVideos':
                 $m = new MongoClient();
@@ -103,7 +104,7 @@ class AnyTV_Listener
                 $params['featuredVideos'] = AnyTV_Helpers::getFeaturedVideos($featuredVideosSkip);
                 $params['games'] = $games;
                 $params['users'] = $users;
-
+                $params['featuredVideosHasNext'] = AnyTV_Helpers::hasNextFeatured($featuredVideosSkip+count($params['featuredVideos']));
                 $params['blocks'] = array(
                     array('id' => 'youtubersBlock', 'phrase' => new XenForo_Phrase('youtubers')),
                     array('id' => 'mediaRecent', 'phrase' => new XenForo_Phrase('latest_videos')),

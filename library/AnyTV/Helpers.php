@@ -39,6 +39,34 @@ class AnyTV_Helpers
         }, $featured));
     }
 
+    public static function hasNextFeatured($skip = 0) {
+        $m = new MongoClient();
+        $db = $m->selectDB("asiafreedom_youtubers");
+        $mydb = XenForo_Application::get('db');
+        $featured = $mydb->fetchAll("
+            SELECT *
+            FROM `anytv_video_featured`
+            WHERE `active` = 1");
+
+        $featuredVideos = array();
+        $featuredVideosMap = array();
+
+        foreach($featured as $data) {
+            $featuredVideos[] = new MongoID($data['video_id']);
+            $featuredVideosMap[$data['video_id']] = $data;
+        }
+
+        $featuredMongo = $db->videos->count(
+            array(
+                '_id' => array(
+                    '$in' => $featuredVideos
+                )
+            )
+        );
+
+        return !($skip >= $featuredMongo);
+    }
+
     public static function getFeaturedVideos($skip = null) {
         $m = new MongoClient();
         $db = $m->selectDB("asiafreedom_youtubers");
