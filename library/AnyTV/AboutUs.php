@@ -6,8 +6,9 @@ class AnyTV_AboutUs
         XenForo_ControllerPublic_Page $controller,
         XenForo_ControllerResponse_View $response
     ) {
+        $options = $options = XenForo_Application::get('options');
 		$response->templateName = 'about_us';
-		$response->params['option'] = array('profile' => 'http://www.facebook.com/mcnfreedom');
+		$response->params['option'] = array('profile' => $options->facebookLink);
 		$response->containerParams = array('banner' => '/images/about-us.png');
 		//$respomse->selectedTabId = 'about-us';
 

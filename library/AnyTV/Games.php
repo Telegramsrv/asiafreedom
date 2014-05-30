@@ -66,8 +66,9 @@ class AnyTV_Games
             ? $_GET['limit'] : 6;
         $offset = isset($_GET['offset']) && is_numeric($_GET['offset'])
             ? $_GET['offset'] : 0;
-		$games = AnyTV_Games::getGames();
-		$response->params['option'] = array('profile' => 'http://www.facebook.com/mcnfreedom');
+        $games = AnyTV_Games::getGames();
+        $options = $options = XenForo_Application::get('options');
+		$response->params['option'] = array('profile' => $options->facebookLink);
 		$response->containerParams = array('bannerNew' => new Xenforo_Phrase('games'));
 
 		$response->templateName = 'anytv_games_list_page';
