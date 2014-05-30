@@ -19,6 +19,7 @@ class AnyTV_Listener
 
     public static function templateCreate(&$templateName, array &$params, XenForo_Template_Abstract $template)
     {
+        $options = $options = XenForo_Application::get('options');
         $featuredVideosSkip = 0;
 
         $params['featuredVideosNextPage'] = 2;
@@ -55,6 +56,9 @@ class AnyTV_Listener
                 }
 
                 $params['users'] = $users;
+                break;
+            case 'EWRblock_FaceBook':
+                $params['options'] = array('profile' => $options->facebookLink);
                 break;
             case 'EWRblock_AnyTVFeaturedUsers':
                 $params['title'] = 'Featured Users';

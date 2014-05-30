@@ -12,6 +12,13 @@ class AnyTV_Listeners_NavigationTabs
 			'selected' => ($selectedTabId == 'about-us')
 		);
 
+        $extraTabs['youtubers'] = array(
+            'id' => 'youtubers',
+            'title' => new XenForo_Phrase('youtubers'),
+            'href' => '?pages/youtubers',
+            'selected' => ($selectedTabId == 'youtubers')
+        );
+
 		$extraTabs['gameslist'] = array(
 			'id' => 'gameslist',
 			'title' => new XenForo_Phrase('games'),
