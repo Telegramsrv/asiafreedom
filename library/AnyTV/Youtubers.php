@@ -10,6 +10,6 @@ class AnyTV_Youtubers
         $options = $options = XenForo_Application::get('options');
         $response->params['option'] = array('profile' => $options->facebookLink);
 		$response->templateName = 'youtubers_list_page';
-		$response->containerParams = array('banner' => '/images/youtubers-list.png');
+		$response->containerParams = array('banner' => '/zh/images/youtubers-list.png');
 	}
 }
