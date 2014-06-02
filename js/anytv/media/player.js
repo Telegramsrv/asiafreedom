@@ -204,7 +204,7 @@ var hashVideo = function(params) {
 		if(!isShows)
 			queue.push("showTab($('a[data-context=media]'), 'media')");
 		//queue.push("showVideo($('img[data-id="+video+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', 'false', 'false')");
-		queue.push("showVideo(null, 'l86L_YdM3do', null, null, 'false')");
+		queue.push("showVideo(null, '"+video+"', null, null, 'false')");
 		clicked = 1;
 		return;
 	}
@@ -503,10 +503,10 @@ $(window).on('hashchange', function(e) {
 		//videos or playlist
 		arr.splice(0,1);
 		eval("hash"+capitaliseFirstLetter(arr[0])+"(arr)");
+	} else {
+		queue.push("showVideo(null, '"+$('#latestVideo').val()+"', null, null, 'false')");
+		clicked = 1;
 	}
-
-	queue.push("showVideo(null, 'l86L_YdM3do', null, null, 'false')");
-	clicked = 1;
 
 	if(hash.split('=').length==2) {
 		var type = hash.split('=')[0];
