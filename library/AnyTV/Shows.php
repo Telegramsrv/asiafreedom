@@ -8,6 +8,7 @@ class AnyTV_Shows
 		$response->templateName = 'anytv_shows_page';
 		$response->params['games'] = AnyTV_Games::getGames();
         $response->params['option'] = array('profile' => $options->facebookLink);
+        $response->params['joinUs'] = $options->joinUsLink;
         $response->params['channel'] = $options->ShowsChannel;
 		$response->params['playlist'] = $options->ShowsPlaylist;
 	}

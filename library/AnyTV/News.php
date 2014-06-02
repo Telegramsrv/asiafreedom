@@ -10,6 +10,7 @@ class AnyTV_News
 		$response->templateName = 'anytv_news_page';
 		$response->params['games'] = AnyTV_Games::getGames();
         $response->params['option'] = array('profile' => $options->facebookLink);
+        $response->params['joinUs'] = $options->joinUsLink;
 		$response->params['channel'] = $options->NewsChannel;
 		$response->params['playlist'] = $options->NewsPlaylist;
 	}

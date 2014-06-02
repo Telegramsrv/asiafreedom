@@ -9,6 +9,7 @@ class AnyTV_AboutUs
         $options = $options = XenForo_Application::get('options');
 		$response->templateName = 'about_us';
 		$response->params['option'] = array('profile' => $options->facebookLink);
+		$response->params['joinUs'] = $options->joinUsLink;
 		$response->containerParams = array('banner' => '/zh/images/about-us.png');
 		//$respomse->selectedTabId = 'about-us';
 

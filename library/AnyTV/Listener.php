@@ -34,6 +34,9 @@ class AnyTV_Listener
         }
 
         switch($templateName) {
+            case 'EWRblock_sliderNavigation':
+                $params['joinUs'] = $options->joinUsLink;
+                break;
             case 'EWRblock_latestVideos':
                 $m = new MongoClient();
                 $db = $m->selectDB("asiafreedom_youtubers");
