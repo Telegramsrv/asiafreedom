@@ -26,6 +26,23 @@ class AnyTV_Helpers
 
     }
 
+    public static function getLatestVideo($youtubeId) {
+        $id = NULL;
+        $username = $youtubeId;
+
+        $xml = simplexml_load_file(sprintf('http://gdata.youtube.com/feeds/base/users/%s/uploads?alt=rss&v=2&orderby=published', $username));
+
+        if ( ! empty($xml->channel->item[0]->link) )
+        {
+          parse_str(parse_url($xml->channel->item[0]->link, PHP_URL_QUERY), $url_query);
+
+          if ( ! empty($url_query['v']) )
+            $id = $url_query['v'];
+        }
+
+        return $id;
+    }
+
     public static function getFeaturedUsers() {
         $mydb = XenForo_Application::get('db');
         $featured = $mydb->fetchAll("

@@ -164,7 +164,6 @@ var playerReady = false;
 var queue = [];
 
 function onPlayerReady(event) {
-	console.log('ready');
     playerReady = true;
     for(var i=0; i<queue.length; i++) {
     	eval(queue[i]);
@@ -204,7 +203,9 @@ var hashVideo = function(params) {
 	if(!playerReady){
 		if(!isShows)
 			queue.push("showTab($('a[data-context=media]'), 'media')");
-		queue.push("showVideo($('img[data-id="+video+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', 'false', 'false')");
+		//queue.push("showVideo($('img[data-id="+video+"]'), '"+video+"', 'https://www.youtube.com/watch?v="+video+"', 'false', 'false')");
+		queue.push("showVideo(null, 'l86L_YdM3do', null, null, 'false')");
+		clicked = 1;
 		return;
 	}
 	//showTab($('a[data-context=media]'), 'media');
@@ -416,7 +417,10 @@ var template = function(templateHTML, data) {
 var showVideo = function(context, id, link, playlist, index) {
 	console.log(context);
 	$('.ytVideo.active').removeClass('active');
-	$(context).parent().addClass('active');
+	if(context) {
+		$(context).parent().addClass('active');
+	}
+
 	$('.VideoLoader').show();
 	$('.MediaContainer iframe').addClass('hide');
 	var src = 'http://www.youtube.com/embed/'+id+'?autohide=1&autoplay=1&enablejsapi=1';
@@ -500,6 +504,9 @@ $(window).on('hashchange', function(e) {
 		arr.splice(0,1);
 		eval("hash"+capitaliseFirstLetter(arr[0])+"(arr)");
 	}
+
+	queue.push("showVideo(null, 'l86L_YdM3do', null, null, 'false')");
+	clicked = 1;
 
 	if(hash.split('=').length==2) {
 		var type = hash.split('=')[0];

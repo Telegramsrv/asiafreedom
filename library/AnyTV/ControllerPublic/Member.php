@@ -171,6 +171,7 @@ class AnyTV_ControllerPublic_Member extends XFCP_AnyTV_ControllerPublic_Member
 			'canEditUser' => $userModel->canEditUser($user),
 			'canViewIps' => $userModel->canViewIps(),
 			'canReport' => $this->_getUserModel()->canReportUser($user),
+			'latestVideo' => AnyTV_Helpers::getLatestVideo($customFieldsGrouped['personal']['youtube_id']['field_value']),
 
 			'warningCount' => $warningCount,
 			'canViewWarnings' => $canViewWarnings,
