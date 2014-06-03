@@ -25,5 +25,12 @@ class AnyTV_Listeners_NavigationTabs
 			'href' => '?pages/gameslist',
 			'selected' => ($selectedTabId == 'gameslist')
 		);
+
+		$extraTabs['streams'] = array(
+			'id' => 'streams',
+			'title' => new XenForo_Phrase('streams'),
+			'href' => '?pages/streams',
+			'selected' => ($selectedTabId == 'streams')
+		);
 	}
 }
