@@ -70,7 +70,6 @@ var getUserStreams = function(arg) {
 
 	usrstrms = arg;
 	for(var i=0; i<arg.length; i++) {
-		console.log(i+' | '+arg[i]);
 		getStream(arg[i]);
 	}
 }
@@ -88,7 +87,6 @@ var getStream = function(channel) {
 
 var getStreamCallback = function(res) {
 	loaded++;
-	console.log('loaded '+loaded);
 	if(!res.stream) {
 		if(loaded == usrstrms.length) {
 			setStreams();
@@ -213,6 +211,14 @@ var hashVideo = function(params) {
 	showVideo($('img[data-id='+video+']'), video, 'https://www.youtube.com/watch?v='+video, 'false', 'false');
 };
 
+var hashStream = function(params) {
+	params.splice(0,1);
+	var streamId = params.splice(0,1);
+	console.log('hashstream');
+	loadStream(streamId);
+	showTab($('a[data-context=stream]'), 'stream');
+}
+
 var hashPlaylist = function(params) {
 	params.splice(0,1);
 	var playlistId = params.splice(0,1);
@@ -221,7 +227,6 @@ var hashPlaylist = function(params) {
 	var position = params[1];
 
 	if(!playerReady){
-		console.log('here');
 		if(!isShows)
 			queue.push("showTab($('a[data-context=media]'), 'media')");
 		queue.push("getPlaylistContents('"+playlistId+"')");
@@ -416,7 +421,6 @@ var template = function(templateHTML, data) {
 };
 
 var showVideo = function(context, id, link, playlist, index) {
-	console.log(context);
 	$('.ytVideo.active').removeClass('active');
 	if(context) {
 		$(context).parent().addClass('active');

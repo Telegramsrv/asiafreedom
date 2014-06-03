@@ -41,16 +41,14 @@ class AnyTV_Models_CustomUserFieldModel extends XenForo_Model_UserField
 		foreach($values['twitchStreams'] as $value) {
 			$toFilter = $value['value'];
 			$toFilter = explode(',', $toFilter);
-			foreach ($toFilter as $key => $value) {
-				$val = rtrim(ltrim($value));
+			foreach ($toFilter as $key => $value2) {
+				$val = rtrim(ltrim($value2));
 				if(strlen($val)) {
 					$val = $this->getUserFromURL($val);
-					//$toReturn[$value['user']] = $val;
+					$toReturn[$val] = $value['user']['username'].'.'.$value['user']['user_id'];
 				}
 			}
 		}
-
-		die(json_encode($values));
 
 		return $toReturn;
 	}
