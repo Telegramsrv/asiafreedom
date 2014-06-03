@@ -215,6 +215,7 @@ var hashStream = function(params) {
 	params.splice(0,1);
 	var streamId = params.splice(0,1);
 	console.log('hashstream');
+	clicked = 1;
 	loadStream(streamId);
 	showTab($('a[data-context=stream]'), 'stream');
 }
