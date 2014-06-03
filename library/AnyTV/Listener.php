@@ -109,9 +109,9 @@ class AnyTV_Listener
                 $params['users'] = $users;
                 $params['featuredVideosHasNext'] = AnyTV_Helpers::hasNextFeatured($featuredVideosSkip+count($params['featuredVideos']));
                 $params['blocks'] = array(
-                    array('id' => 'youtubersBlock', 'phrase' => new XenForo_Phrase('youtubers')),
                     array('id' => 'mediaRecent', 'phrase' => new XenForo_Phrase('latest_videos')),
                     array('id' => 'featuredVideos', 'phrase' => new XenForo_Phrase('featured_videos')),
+                    array('id' => 'youtubersBlock', 'phrase' => new XenForo_Phrase('youtubers')),
                     array('id' => 'gamesBlock', 'phrase' => new XenForo_Phrase('games'))
                 );
                 break;

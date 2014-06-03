@@ -51,7 +51,6 @@ var documentReady = function(){
 		$('.VideoLoader').hide();
 	});
 
-
 	twtch = $('#UserTwitch').val();
 	if(twtch) {
 		twtch = twtch.replace(/\s/g, '');
@@ -71,6 +70,7 @@ var getUserStreams = function(arg) {
 
 	usrstrms = arg;
 	for(var i=0; i<arg.length; i++) {
+		console.log(i+' | '+arg[i]);
 		getStream(arg[i]);
 	}
 }
@@ -88,6 +88,7 @@ var getStream = function(channel) {
 
 var getStreamCallback = function(res) {
 	loaded++;
+	console.log('loaded '+loaded);
 	if(!res.stream) {
 		if(loaded == usrstrms.length) {
 			setStreams();
@@ -449,7 +450,6 @@ var showVideo = function(context, id, link, playlist, index) {
             videoId: id,
             playerVars: { 'autoplay': 1, 'controls': 1 },
             events: {
-                'onReady': onPlayerReady,
                 'onStateChange': onPlayerStateChange
             }
         });
