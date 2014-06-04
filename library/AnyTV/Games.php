@@ -5,11 +5,12 @@ class AnyTV_Games
 	public static function resposeLayout(XenForo_ControllerPublic_Page $controller, XenForo_ControllerResponse_View $response)
 	{
 		$game = $_GET['game'];
-		$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? $_GET['limit'] : 6;
+		$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? $_GET['limit'] : 0;
 		$offset = isset($_GET['offset']) && is_numeric($_GET['offset']) ? $_GET['offset'] : 0;
 		$games = AnyTV_Games::getGames();
 		$videos = AnyTV_Games::getVideos($games[$game]['name'], $limit, $offset);
-
+		$options = $options = XenForo_Application::get('options');
+        $response->params['option'] = array('profile' => $options->facebookLink);
 		$response->templateName = 'anytv_games_page';
 		$response->params['game'] = $games[$game]['name'];
 		$response->params['games'] = $games;
