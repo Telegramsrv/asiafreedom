@@ -65,7 +65,7 @@ class AnyTV_Listener
                 $params['options'] = array('profile' => $options->facebookLink);
                 break;
             case 'EWRblock_AnyTVFeaturedUsers':
-                $params['title'] = 'Featured Users';
+                $params['title'] = new XenForo_Phrase('featured_users');
                 $params['featured'] = AnyTV_Helpers::getFeaturedUsers();
                 break;
             case 'EWRblock_AnyTVTabbedBlocks':
