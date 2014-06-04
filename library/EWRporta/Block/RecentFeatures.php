@@ -7,7 +7,7 @@ class EWRporta_Block_RecentFeatures extends XenForo_Model
 		$options['forum'] = implode(',', $this->getModelFromCache('EWRporta_Model_Promotes')->getPromoteForums());
 
 		$news = $this->_getDb()->fetchAll("
-			SELECT xf_thread.*, xf_post.message, xf_attachment.*, xf_attachment_data.*, xf_post_file_value.field_value as header_location,
+			SELECT xf_thread.*, xf_post.message, xf_attachment.*, xf_attachment_data.*, xf_post_field_value.field_value as header_location,
 				IF(EWRporta_promotes.promote_date IS NULL, xf_thread.post_date, EWRporta_promotes.promote_date) AS promote_date
 			FROM xf_thread
 				INNER JOIN xf_post ON (xf_post.post_id = xf_thread.first_post_id)
