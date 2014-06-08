@@ -4,6 +4,7 @@ var value;
 var reserveClick;
 var clicked;
 var stateChange = true;
+var loadedVideo = null;
 
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
@@ -401,6 +402,12 @@ var getVideos = function(link, search) {
 					return;
 				}
 
+				if(loadedVideo) {
+					loadComments("https://www.youtube.com/watch?v="+loadedVideo);
+					showDetails(loadedVideo);
+					loadShares("https://www.youtube.com/watch?v="+loadedVideo);
+				}
+
 				reserveClick = true;
 			});
 		}
@@ -510,6 +517,7 @@ $(window).on('hashchange', function(e) {
 		eval("hash"+capitaliseFirstLetter(arr[0])+"(arr)");
 	} else {
 		queue.push("showVideo(null, '"+$('#latestVideo').val()+"', null, null, 'false')");
+		loadedVideo = $('#latestVideo').val();
 		clicked = 1;
 	}
 
