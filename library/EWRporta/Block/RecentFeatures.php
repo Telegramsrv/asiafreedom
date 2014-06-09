@@ -27,7 +27,7 @@ class EWRporta_Block_RecentFeatures extends XenForo_Model
 		$options['bullets'] = $options['bullets'] ? 'true' : 'false';
 		$options['controls'] = $options['controls'] ? 'true' : 'false';
 		$options['autorotate'] = $options['autorotate'] ? 'true' : 'false';
-
+//die(json_encode($news));
         return $news;
 	}
 }

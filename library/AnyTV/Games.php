@@ -115,6 +115,7 @@ class AnyTV_Games
 	public static function getGames($filter = array(), $featuredIds = array()) {
 		$options = XenForo_Application::get('options');
 		$games = array();
+
 		//get the games
 		foreach ($options->anytv_categories_categories['game_id'] as $key => $value) {
             if(count($filter)

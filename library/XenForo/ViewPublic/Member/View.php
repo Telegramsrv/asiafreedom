@@ -22,8 +22,10 @@ class XenForo_ViewPublic_Member_View extends XenForo_ViewPublic_Base
 		$this->_params['games'] = array();
 
 		for($i=0; $i<count($games['game_id']); $i++) {
-			$this->_params['games'][$games['game_id'][$i]]['image'] = $games['game_image'][$i];
-			$this->_params['games'][$games['game_id'][$i]]['name'] = $games['game_name'][$i];
+			if(isset($games['game_id'][$i])) {
+				$this->_params['games'][$games['game_id'][$i]]['image'] = $games['game_image'][$i];
+				$this->_params['games'][$games['game_id'][$i]]['name'] = $games['game_name'][$i];
+			}
 		}
 	}
 }
