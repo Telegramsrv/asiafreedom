@@ -108,7 +108,7 @@ var getStreamCallback = function(res) {
 	var tpl = template($('#streamTpl').html(), data);
 
 	$('#streamsContainer').html($('#streamsContainer').html()+tpl);
-
+	
 	if(loaded == usrstrms.length) {
 		setStreams();
 	}
@@ -145,6 +145,9 @@ var loadStream = function(channel) {
 
 	context = $('.streamContainer > .left.comments');
 	$('iframe', context).attr('src', 'http://twitch.tv/'+channel+'/chat?popout=');
+
+	$('.stream > object').height($(window).innerHeight() - $("#header").innerHeight() - 75);
+	$('.comments > iframe').height($(window).innerHeight() - $("#header").innerHeight() - 75);
 }
 
 /*****************************************************************************************/
