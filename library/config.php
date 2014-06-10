@@ -1,9 +1,9 @@
 <?php
 
 $config['db']['host'] = 'localhost';
-$config['db']['port'] = '3306';
+$config['db']['port'] = '';
 $config['db']['username'] = 'root';
-$config['db']['password'] = 'dinnid';
+$config['db']['password'] = '';
 $config['db']['dbname'] = 'asiafreedom';
 
 
