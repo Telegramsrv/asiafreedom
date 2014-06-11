@@ -36,6 +36,23 @@ class AnyTV_Models_CustomUserFieldModel extends XenForo_Model_UserField
 		return $values;
 	}
 
+	public function getYouTube(){
+		$fields = $this->_getDb()->fetchAll('
+			SELECT user_id, field_value "youtubeUploads" from xf_user_field_value WHERE field_id="youtubeUploads"
+		');
+
+		$access = $this->_getDb()->fetchAll('
+			SELECT user_id, field_value "access_token" from xf_user_field_value WHERE field_id="access_token"
+		');
+
+		for($i=0; $i<sizeof($fields); $i++)
+			for($j=0; $j<sizeof($access); $j++)
+				if($fields[$i]['user_id']==$access[$j]['user_id']) 
+					$fields[$i]['access_token'] = $access[$j]['access_token'];
+
+		return $fields;
+	}
+
 	public function filterTwitchStreams($values) {
 		$toReturn = array();
 		foreach($values['twitchStreams'] as $value) {

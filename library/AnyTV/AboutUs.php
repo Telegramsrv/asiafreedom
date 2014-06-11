@@ -20,13 +20,12 @@ class AnyTV_AboutUs
 		if(isset($_GET['cache'])) {
 			ini_set('max_execution_time', 0);
 			$fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
-			$values = $fieldModel->getFieldValuesByFieldId('youtubeUploads');
+			/*$values = $fieldModel->getFieldValuesByFieldId('youtubeUploads');
 			$values = $values['youtubeUploads'];
 			$lists = array_map(function($value) {
 				return $value['value'];
-			}, $values);
-
-			$lists = array_filter($lists);
+			}, $values);*/
+			$lists = $fieldModel->getYouTube();
 
 			$items = array();
 			$json = array();
@@ -37,18 +36,37 @@ class AnyTV_AboutUs
 
 			foreach ($lists as $key => $value) {
 				do {
-					$json = file_get_contents("https://www.googleapis.com/youtube/v3/playlistItems?order=date&playlistId="
-                        .$value."&part=snippet&key=AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk&maxResults=50"
-                        .(isset($json['nextPageToken'])
-                            ? "&pageToken=".$json['nextPageToken']
-                            : ""
-                        )
-                    );
-					$json = json_decode($json, true);
-					$items = array_merge($items, $json['items']);
+					if(isset($value['youtubeUploads']) && $value['youtubeUploads'] != ''){
+						$json = file_get_contents("https://www.googleapis.com/youtube/v3/playlistItems?order=date&playlistId="
+	                        .$value['youtubeUploads']."&part=snippet&key=AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk&maxResults=50"
+	                        .(isset($json['nextPageToken'])
+	                            ? "&pageToken=".$json['nextPageToken']
+	                            : ""
+	                        )
+	                    );
+						$json = json_decode($json, true);
+						$items = array_merge($items, $json['items']);
+	                }
+
+
+					if(isset($value['access_token']) && $value['access_token'] != ''){
+						$tags = array();
+						$i=0;
+						foreach($items as $item){
+							$tags = file_get_contents("https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id="
+								.$item['snippet']['resourceId']['videoId']."&fields=items(snippet(tags)%2C+statistics)"
+								."&access_token=".$value['access_token']
+							);
+							$tags = json_decode($tags, true);
+							$items[$i]['snippet']['resourceId'] = array_merge($items[$i]['snippet']['resourceId'], $tags['items'][0]['snippet']);
+							$items[$i]['snippet']['resourceId'] = array_merge($items[$i]['snippet']['resourceId'], $tags['items'][0]['statistics']);
+							$i++;
+						}
+					}
 				} while(isset($json['nextPageToken']));
 
-				$db->videos->batchInsert($items);
+				if(isset($items) && !empty($items))
+					$db->videos->batchInsert($items);
 				$items = array();
 			}
 		}
