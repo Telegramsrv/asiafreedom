@@ -57,7 +57,8 @@ class AnyTV_Helpers
     }
 
     public static function hasNextFeatured($skip = 0) {
-        $m = new MongoClient();
+        $host = XenForo_Application::get('db')->getConfig()['host'];
+        $m = new MongoClient($host); // connect
         $db = $m->selectDB("asiafreedom_youtubers");
         $mydb = XenForo_Application::get('db');
         $featured = $mydb->fetchAll("
@@ -85,7 +86,8 @@ class AnyTV_Helpers
     }
 
     public static function getFeaturedVideos($skip = null) {
-        $m = new MongoClient();
+        $host = XenForo_Application::get('db')->getConfig()['host'];
+        $m = new MongoClient($host); // connect
         $db = $m->selectDB("asiafreedom_youtubers");
         $mydb = XenForo_Application::get('db');
         $featured = $mydb->fetchAll("

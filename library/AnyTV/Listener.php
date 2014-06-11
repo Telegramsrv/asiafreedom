@@ -38,7 +38,8 @@ class AnyTV_Listener
                 $params['joinUs'] = $options->joinUsLink;
                 break;
             case 'EWRblock_latestVideos':
-                $m = new MongoClient();
+                $host = XenForo_Application::get('db')->getConfig()['host'];
+                $m = new MongoClient($host); // connect
                 $db = $m->selectDB("asiafreedom_youtubers");
                 $videos = $db->videos
                     ->find(
@@ -69,7 +70,8 @@ class AnyTV_Listener
                 $params['featured'] = AnyTV_Helpers::getFeaturedUsers();
                 break;
             case 'EWRblock_AnyTVTabbedBlocks':
-                $m = new MongoClient();
+                $host = XenForo_Application::get('db')->getConfig()['host'];
+                $m = new MongoClient($host); // connect
                 $db = $m->selectDB("asiafreedom_youtubers");
                 $videos = $db->videos
                     ->find(

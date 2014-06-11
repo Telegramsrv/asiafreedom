@@ -77,7 +77,8 @@ class AnyTV_Games
 	}
 
 	public static function getVideos($game, $limit=0, $offset=0, $count = false) {
-		$m = new MongoClient();
+		$host = XenForo_Application::get('db')->getConfig()['host'];
+   		$m = new MongoClient($host); // connect
         $db = $m->selectDB("asiafreedom_youtubers");
         $videos = $db->videos
             ->find(
