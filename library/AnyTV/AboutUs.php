@@ -16,22 +16,17 @@ class AnyTV_AboutUs
 		/*
 			code for the cron job actually
 		 */
-
 		if(isset($_GET['cache'])) {
 			ini_set('max_execution_time', 0);
 			$fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
-			/*$values = $fieldModel->getFieldValuesByFieldId('youtubeUploads');
-			$values = $values['youtubeUploads'];
-			$lists = array_map(function($value) {
-				return $value['value'];
-			}, $values);*/
 			$lists = $fieldModel->getYouTube();
 
 			$items = array();
 			$json = array();
 			$i = 0;
 
-			$m = new MongoClient(); // connect
+			$host = XenForo_Application::get('db')->getConfig()['host'];
+			$m = new MongoClient($host); // connect
 			$db = $m->selectDB("asiafreedom_youtubers");
 
 			foreach ($lists as $key => $value) {

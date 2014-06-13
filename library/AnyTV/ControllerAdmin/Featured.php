@@ -95,7 +95,8 @@ class AnyTV_ControllerAdmin_Featured extends XenForo_ControllerAdmin_User
 	}
 
 	public function actionVideos() {
-		$m = new MongoClient();
+		$host = XenForo_Application::get('db')->getConfig()['host'];
+   		$m = new MongoClient($host); // connect
         $db = $m->selectDB("asiafreedom_youtubers");
 
         $mydb = XenForo_Application::get('db');

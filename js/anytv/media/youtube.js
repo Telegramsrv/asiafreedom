@@ -12,6 +12,7 @@ var signinCallback = function(authResult) {
          	type: "GET",
          	success: function(data) {
          		$('#ctrl_custom_field_access_token').val(authResult.access_token);
+         		$('#ctrl_custom_field_youtube_id').val(data.items[0].id);
          		$('#ctrl_custom_field_youtubeUploads').val(data.items[0].contentDetails.relatedPlaylists.uploads);
          		alert('Successfully grabbed the data from your Youtube Account. \n\nClick the "Save Changes" button below to save your profile.')
          	}
