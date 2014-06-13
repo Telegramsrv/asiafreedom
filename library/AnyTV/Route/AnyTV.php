@@ -18,6 +18,7 @@ class AnyTV_Route_AnyTV implements XenForo_Route_Interface
 			case 'featured':		$controllerName = '_Featured'; break;
 			case 'hasmedia': 		$controllerName = '_HasMedia'; break;
 			case 'user_settings':	$controllerName = '_UserSettings'; break;
+			case 'console':			$controllerName = '_Console'; break;
 			default:				$controllerName = '_Featured';
 		}
 

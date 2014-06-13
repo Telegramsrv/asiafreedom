@@ -481,7 +481,16 @@ var loadShares = function(link) {
 };
 
 var showDetails = function(id) {
-	$("#mediaDetails").html(template($('#VideoDetailTemplate').html(), globalVideos[id]));
+	if(globalVideos[id]) {
+		if(!globalVideos[id]['VIEWS']) {
+			$.get('index.php?pages/about-us&count&videoId='+id, function(e) {
+				globalVideos[id]['VIEWS'] = e;
+				$("#mediaDetails").html(template($('#VideoDetailTemplate').html(), globalVideos[id]));
+			});
+		} else {
+			$("#mediaDetails").html(template($('#VideoDetailTemplate').html(), globalVideos[id]));
+		}
+	}
 };
 
 var loadComments = function(link) {
