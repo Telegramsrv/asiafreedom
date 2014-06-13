@@ -289,9 +289,9 @@ var _getUserPlaylists = function(link) {
 					href: '#',
 					class:'PrevButton PlaylistPaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.prevPageToken),
-					text: 'Prev'
+					text: ''
 				});
-				a.append($('<i/>', { class: 'fa fa-arrow-left' }));
+				a.append($('<i/>', { class: 'fa fa-chevron-circle-left fa-3x' }));
 				html += a[0].outerHTML;
 			}
 
@@ -300,9 +300,9 @@ var _getUserPlaylists = function(link) {
 					href: '#',
 					class:'NextButton PlaylistPaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.nextPageToken),
-					text: 'Next'
+					text: '	'
 				});
-				a.prepend($('<i/>', { class: 'fa fa-arrow-right' }));
+				a.prepend($('<i/>', { class: 'fa fa-chevron-circle-right fa-3x' }));
 				html += a[0].outerHTML;
 			}
 
@@ -382,9 +382,9 @@ var getVideos = function(link, search) {
 					href: '#',
 					class:'PrevButton PaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.prevPageToken),
-					text: 'Prev'
+					text: ''
 				});
-				a.append($('<i/>', { class: 'fa fa-arrow-left' }));
+				a.append($('<i/>', { class: 'fa fa-chevron-circle-left fa-3x' }));
 				html += a[0].outerHTML;
 			}
 
@@ -393,9 +393,9 @@ var getVideos = function(link, search) {
 					href: '#',
 					class:'NextButton PaginationButton',
 					'data-token': updateQueryStringParameter(link, 'pageToken', e.nextPageToken),
-					text: 'Next'
+					text: ''
 				});
-				a.prepend($('<i/>', { class: 'fa fa-arrow-right' }));
+				a.prepend($('<i/>', { class: 'fa fa-chevron-circle-right fa-3x' }));
 				html += a[0].outerHTML;
 			}
 
