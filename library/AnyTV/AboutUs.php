@@ -17,11 +17,6 @@ class AnyTV_AboutUs
 			code for the cron job actually
 		 */
 		if(isset($_GET['cache'])) {
-			/*$values = $fieldModel->getFieldValuesByFieldId('youtubeUploads');
-			$values = $values['youtubeUploads'];
-			$lists = array_map(function($value) {
-				return $value['value'];
-			}, $values);*/
 			ini_set('max_execution_time', 0);
 			$fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
 			$lists = $fieldModel->getYouTube();

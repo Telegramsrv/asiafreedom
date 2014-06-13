@@ -45,10 +45,19 @@ class AnyTV_Models_CustomUserFieldModel extends XenForo_Model_UserField
 			SELECT user_id, field_value "access_token" from xf_user_field_value WHERE field_id="access_token"
 		');
 
+		$id = $this->_getDb()->fetchAll('
+			SELECT user_id, field_value "youtube_id" from xf_user_field_value WHERE field_id="youtube_id"
+		');
+
 		for($i=0; $i<sizeof($fields); $i++)
 			for($j=0; $j<sizeof($access); $j++)
 				if($fields[$i]['user_id']==$access[$j]['user_id']) 
 					$fields[$i]['access_token'] = $access[$j]['access_token'];
+
+		for($i=0; $i<sizeof($fields); $i++)
+			for($j=0; $j<sizeof($id); $j++)
+				if($fields[$i]['user_id']==$id[$j]['user_id']) 
+					$fields[$i]['youtube_id'] = $id[$j]['youtube_id'];
 
 		return $fields;
 	}
