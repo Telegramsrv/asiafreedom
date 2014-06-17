@@ -24,11 +24,6 @@ class AnyTV_AboutUs
 			code for the cron job actually
 		 */
 		if(isset($_GET['cache'])) {
-			/*$values = $fieldModel->getFieldValuesByFieldId('youtubeUploads');
-			$values = $values['youtubeUploads'];
-			$lists = array_map(function($value) {
-				return $value['value'];
-			}, $values);*/
 			ini_set('max_execution_time', 0);
 			$fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
 			$lists = $fieldModel->getYouTube();
@@ -41,6 +36,7 @@ class AnyTV_AboutUs
 			$m = new MongoClient($host); // connect
 			$db = $m->selectDB("asiafreedom_youtubers");
 			$videoCount = 0;
+	        //$path = '/Users/Public/log.txt';
 	        $path = '/Library/WebServer/Documents/asiafreedom/zh/log.txt';
 			foreach ($lists as $key => $value) {
 				file_put_contents($path, ":\n\r\n: =====================================START LOOP===============================================", FILE_APPEND);
@@ -51,7 +47,7 @@ class AnyTV_AboutUs
 					if(isset($value['youtubeUploads']) && $value['youtubeUploads'] != ''){
 						do {
 							$json = @file_get_contents("https://www.googleapis.com/youtube/v3/playlistItems?order=date&playlistId="
-		                        .$value['youtubeUploads']."&part=snippet&key=AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk&maxResults=50"
+		                        .$value['youtubeUploads']."&part=snippet&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50"
 		                        .(isset($json['nextPageToken'])
 		                            ? "&pageToken=".$json['nextPageToken']
 		                            : ""
@@ -72,7 +68,7 @@ class AnyTV_AboutUs
 					$requestUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id="
 						.$item['snippet']['resourceId']['videoId']."&fields=items(snippet".($hasAccess ? '(channelId%2Ctags)' : '(channelId)')
 						."%2C+statistics)"
-						.($hasAccess ? "&access_token=".$value['access_token'] : "&key=AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk&maxResults=50");
+						.($hasAccess ? "&access_token=".$value['access_token'] : "&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50");
 
 					file_put_contents($path, ":\n\r\n: REQUEST ".++$videoCount.": ".$requestUrl, FILE_APPEND);
 

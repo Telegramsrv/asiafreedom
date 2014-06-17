@@ -5,10 +5,10 @@ class AnyTV_ControllerAdmin_Tags extends XenForo_ControllerAdmin_User
 	public function actionIndex()
 	{
 		$games = AnyTV_Games::getGames();
-        $featuredGames = AnyTV_Games::getFeatured();
+        $tags = AnyTV_Games::getTags();
 
-        foreach ($featuredGames as $key => $value) {
-        	$games[$key] = $value;
+        foreach ($tags as $key => $value) {
+        	$games[$value['game_id']]['tags'] = $value['tags'];
         }
 
         $criteria = $this->_input->filterSingle('criteria', XenForo_Input::JSON_ARRAY);
@@ -61,7 +61,27 @@ class AnyTV_ControllerAdmin_Tags extends XenForo_ControllerAdmin_User
 	public function actionSave() {
 		$url = $this->_input->getInput();
 		$url = array_filter(explode('/', $url['_origRoutePath']));
-		print_r($url);
+		$url = explode('.', $url[2]);
+		
+		$mydb = XenForo_Application::get('db');
+		$tags = $mydb->fetchAll("
+			SELECT *
+			FROM `anytv_game_tags`
+			WHERE `game_id` = '".$url[0]."'");
+
+		if( empty($tags) ){
+			$values = array(
+				'game_id'	=> $url[0],
+				'tags' 		=> htmlspecialchars($url[1])
+			);
+			$mydb->insert('anytv_game_tags', $values);
+		} else{
+			$where = array('id='.$tags[0]['id']);
+			$values = array('tags' => htmlspecialchars($url[1]));
+			$mydb->update('anytv_game_tags', $values, $where);
+		}
+
+		header('Location: admin.php?anytv/tags');
 		exit;
 	}
 }
