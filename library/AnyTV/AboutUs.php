@@ -36,8 +36,8 @@ class AnyTV_AboutUs
 			$m = new MongoClient($host); // connect
 			$db = $m->selectDB("asiafreedom_youtubers");
 			$videoCount = 0;
-	        //$path = '/Users/Public/log.txt';
-	        $path = '/Library/WebServer/Documents/asiafreedom/zh/log.txt';
+	        $path = '/Users/Public/log.txt';
+	        //$path = '/Library/WebServer/Documents/asiafreedom/zh/log.txt';
 			foreach ($lists as $key => $value) {
 				file_put_contents($path, ":\n\r\n: =====================================START LOOP===============================================", FILE_APPEND);
 				
@@ -74,6 +74,10 @@ class AnyTV_AboutUs
 
 					do {
 						$tags = @file_get_contents($requestUrl);
+						if($tags===false){
+							file_put_contents($path, ":\n\r\n:RESULT: ".$tags, FILE_APPEND);
+							break;
+						}
 					}while(!$tags);
 
 	                file_put_contents($path, ":\n\r\n:RESULT: ".$tags, FILE_APPEND);

@@ -1,15 +1,27 @@
 <?php
 
-class AnyTV_ControllerAdmin_Tags extends XenForo_ControllerAdmin_User
+class AnyTV_ControllerAdmin_Console extends XenForo_ControllerAdmin_User
 {
 	public function actionIndex()
 	{
-		$games = AnyTV_Games::getGames();
-        $tags = AnyTV_Games::getTags();
+		
+		$consoles = XenForo_Model::create('XenForo_Model_UserField');
+		$consoles = unserialize($consoles->getUserFieldById('navLinks')['field_choices']);
+
+		$mydb = XenForo_Application::get('db');
+		$tags = $mydb->fetchAll("
+			SELECT *
+			FROM `anytv_console_tags`");
+
+		foreach ($consoles as $key => $value) {
+        	$consoles[$key] = array();
+        	$consoles[$key]['id'] = $key;
+        	$consoles[$key]['value'] = $value;
+        }
 
         if(!empty($tags))
-	        foreach ($tags as $key => $value) 
-	        	$games[$value['game_id']]['tags'] = $value['tags'];
+        	foreach ($tags as $key => $value) 
+        		$consoles[$value['console_id']]['tags'] = $value['tags'];
 
         $criteria = $this->_input->filterSingle('criteria', XenForo_Input::JSON_ARRAY);
 		$criteria = $this->_filterUserSearchCriteria($criteria);
@@ -41,8 +53,8 @@ class AnyTV_ControllerAdmin_Tags extends XenForo_ControllerAdmin_User
 		$videos = array();       
 
 		$viewParams = array(
-			'action' => 'games',
-			'games' => $games,
+			'action' => 'consoles',
+			'consoles' => $consoles,
 			'totalVideos' => $totalVideos,
 			'showingAll' => $showingAll,
 			'showAll' => (!$showingAll && $totalVideos <= 5000),
@@ -55,7 +67,10 @@ class AnyTV_ControllerAdmin_Tags extends XenForo_ControllerAdmin_User
 			'filterMore' => ($filterView && $totalVideos > $videosPerPage)
 		);
 
-		return $this->responseView('AnyTV_ViewAdmin_Featured', 'anytv_tags', $viewParams);
+		/*echo "<pre>";
+		print_r($viewParams);
+		exit;*/
+		return $this->responseView('AnyTV_ViewAdmin_Featured', 'anytv_console_tags', $viewParams);
 	}
 
 	public function actionSave() {
@@ -66,22 +81,22 @@ class AnyTV_ControllerAdmin_Tags extends XenForo_ControllerAdmin_User
 		$mydb = XenForo_Application::get('db');
 		$tags = $mydb->fetchAll("
 			SELECT *
-			FROM `anytv_game_tags`
-			WHERE `game_id` = '".$url[0]."'");
+			FROM `anytv_console_tags`
+			WHERE `console_id` = '".$url[0]."'");
 
 		if( empty($tags) ){
 			$values = array(
-				'game_id'	=> $url[0],
-				'tags' 		=> htmlspecialchars($url[1])
+				'console_id'	=> $url[0],
+				'tags' 			=> htmlspecialchars($url[1])
 			);
-			$mydb->insert('anytv_game_tags', $values);
+			$mydb->insert('anytv_console_tags', $values);
 		} else{
 			$where = array('id='.$tags[0]['id']);
 			$values = array('tags' => htmlspecialchars($url[1]));
-			$mydb->update('anytv_game_tags', $values, $where);
+			$mydb->update('anytv_console_tags', $values, $where);
 		}
 
-		header('Location: admin.php?anytv/tags');
+		header('Location: admin.php?anytv/console');
 		exit;
 	}
 }
