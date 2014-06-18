@@ -41,7 +41,7 @@ class AnyTV_AboutUs
 				file_put_contents($path, ":\n\r\n: =====================================START LOOP===============================================", FILE_APPEND);
 
 				$hasAccess = (isset($value['access_token']) && $value['access_token'] != '');
-			    if($hasAccess) {
+			    //if($hasAccess) {
 				do {
 					if(isset($value['youtubeUploads']) && $value['youtubeUploads'] != ''){
 						do {
@@ -90,7 +90,7 @@ class AnyTV_AboutUs
 				if(isset($items) && !empty($items))
 					$db->videos->batchInsert($items);
                 $items = array();
-                }
+               // }
 			}
 		}
 	}
