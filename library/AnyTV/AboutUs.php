@@ -1,5 +1,4 @@
 <?php
-
 class AnyTV_AboutUs
 {
     public static function resposeLayout(
@@ -40,9 +39,9 @@ class AnyTV_AboutUs
 	        $path = '/Library/WebServer/Documents/asiafreedom/zh/log.txt';
 			foreach ($lists as $key => $value) {
 				file_put_contents($path, ":\n\r\n: =====================================START LOOP===============================================", FILE_APPEND);
-				
+
 				$hasAccess = (isset($value['access_token']) && $value['access_token'] != '');
-				
+			    if($hasAccess) {
 				do {
 					if(isset($value['youtubeUploads']) && $value['youtubeUploads'] != ''){
 						do {
@@ -66,8 +65,7 @@ class AnyTV_AboutUs
 				$i=0;
 				foreach($items as $item){
 					$requestUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id="
-						.$item['snippet']['resourceId']['videoId']."&fields=items(snippet".($hasAccess ? '(channelId%2Ctags)' : '(channelId)')
-						."%2C+statistics)"
+						.$item['snippet']['resourceId']['videoId']."&fields=items(snippet(channelId%2Ctags)%2C+statistics)"
 						.($hasAccess ? "&access_token=".$value['access_token'] : "&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50");
 
 					file_put_contents($path, ":\n\r\n: REQUEST ".++$videoCount.": ".$requestUrl, FILE_APPEND);
@@ -81,17 +79,18 @@ class AnyTV_AboutUs
 					$tags = json_decode($tags, true);
 					$items[$i]['snippet']['meta'] = array(
 						'tags' => isset($tags['items'][0]['snippet']['tags']) ?
-							$tags['items'][0]['snippet']['tags'] : array(), 
+							$tags['items'][0]['snippet']['tags'] : array(),
 						'statistics' => $tags['items'][0]['statistics']
 					);
 					$i++;
 				}
-    
+
                 file_put_contents($path, ":\n\r\n: =======================================END LOOP=============================================", FILE_APPEND);
 
 				if(isset($items) && !empty($items))
 					$db->videos->batchInsert($items);
-				$items = array();
+                $items = array();
+                }
 			}
 		}
 	}
