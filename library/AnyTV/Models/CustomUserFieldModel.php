@@ -49,15 +49,29 @@ class AnyTV_Models_CustomUserFieldModel extends XenForo_Model_UserField
 			SELECT user_id, field_value "youtube_id" from xf_user_field_value WHERE field_id="youtube_id"
 		');
 
-		for($i=0; $i<sizeof($fields); $i++)
-			for($j=0; $j<sizeof($access); $j++)
-				if($fields[$i]['user_id']==$access[$j]['user_id']) 
-					$fields[$i]['access_token'] = $access[$j]['access_token'];
+		$refresh = $this->_getDb()->fetchAll('
+			SELECT user_id, field_value "refresh_token" from xf_user_field_value WHERE field_id="refresh_token"
+		');
 
-		for($i=0; $i<sizeof($fields); $i++)
-			for($j=0; $j<sizeof($id); $j++)
-				if($fields[$i]['user_id']==$id[$j]['user_id']) 
+		for($i=0; $i<sizeof($fields); $i++) {
+			for($j=0; $j<sizeof($access); $j++) {
+				if($fields[$i]['user_id']==$access[$j]['user_id']) {
+					$fields[$i]['access_token'] = $access[$j]['access_token'];
+				}
+			}
+
+			for($j=0; $j<sizeof($id); $j++) {
+				if($fields[$i]['user_id']==$id[$j]['user_id']) {
 					$fields[$i]['youtube_id'] = $id[$j]['youtube_id'];
+				}
+			}
+
+			for($j=0; $j<sizeof($refresh); $j++) {
+				if($fields[$i]['user_id']==$refresh[$j]['user_id']) {
+					$fields[$i]['refresh_token'] = $refresh[$j]['refresh_token'];
+				}
+			}
+		}
 
 		return $fields;
 	}
