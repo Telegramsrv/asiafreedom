@@ -22,10 +22,10 @@ class AnyTV_AboutUs
         if(!empty($_POST)) {
             $client = new Google_Client();
             $client->setApplicationName('AsiaFreedom');
-            $client->setRedirectUri("http://dev.gamers.tm");
+            $client->setRedirectUri("http://".$_SERVER['SERVER_NAME']);
             $client->setClientId('556525497714-ci74k99ts0ar37fo5pv0b5ea28es2reg.apps.googleusercontent.com');
             $client->setClientSecret('RDqts1yS-MMG2fREcOWIzZgk');
-            $client->setRedirectUri('http://dev.gamers.tm/zh/index.php?account/user-field-category&user_field_category_id=2');
+            $client->setRedirectUri('http://'.$_SERVER['SERVER_NAME'].'/zh/index.php?account/user-field-category&user_field_category_id=2');
             $auth = $client->authenticate($_POST['code']);
             $token = $client->getAccessToken();
             if($token) {
