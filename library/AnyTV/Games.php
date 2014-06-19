@@ -113,6 +113,15 @@ class AnyTV_Games
         	array_map(function($data) { return $data['id']; }, $featured));
 	}
 
+	public static function getTags() {
+		$mydb = XenForo_Application::get('db');
+        $tags = $mydb->fetchAll("
+			SELECT *
+			FROM `anytv_game_tags`");
+
+        return $tags;
+	}
+
 	public static function getGames($filter = array(), $featuredIds = array()) {
 		$options = XenForo_Application::get('options');
 		$games = array();

@@ -15,6 +15,8 @@ class AnyTV_Route_AnyTV implements XenForo_Route_Interface
 
 		switch ($subPrefix)
 		{
+			case 'tags':			$controllerName = '_Tags'; break;
+			case 'console':			$controllerName = '_Console'; break;
 			case 'featured':		$controllerName = '_Featured'; break;
 			case 'hasmedia': 		$controllerName = '_HasMedia'; break;
 			case 'user_settings':	$controllerName = '_UserSettings'; break;
