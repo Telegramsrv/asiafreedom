@@ -29,7 +29,6 @@ class AnyTV_News
 			$db = $m->selectDB("asiafreedom_youtubers");
 			foreach ($lists as $key => $value) {
 				if(isset($value['youtube_id']) && $value['youtube_id'] != ''){
-					file_put_contents($path, ":\n\r\n: Youtube Id:".$value['youtube_id'], FILE_APPEND);
 					$json = file_get_contents("https://www.googleapis.com/youtube/v3/playlists?channelId="
 	                    .$value['youtube_id']."&part=id%2C+snippet%2C+contentDetails&key=AIzaSyAP14m25_1uScfmZObKqRI4lCwveb9E8Vk&maxResults=50"
 	                );

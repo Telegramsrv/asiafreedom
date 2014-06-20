@@ -9,6 +9,7 @@ class AnyTV_Games
 		$offset = isset($_GET['offset']) && is_numeric($_GET['offset']) ? $_GET['offset'] : 0;
 		$games = AnyTV_Games::getGames();
 		$videos = AnyTV_Games::getVideos($games[$game]['name'], $limit, $offset, false, isset($game[$game]['id']));
+		$playlists = AnyTV_Games::getPlaylist($game);
 		$options = $options = XenForo_Application::get('options');
         $response->params['option'] = array('profile' => $options->facebookLink);
 		$response->templateName = 'anytv_games_page';
@@ -49,11 +50,41 @@ class AnyTV_Games
 			$response->params['globalVideos'][$params['ID']] = $params;
 			$i++;
 		}
+		$response->params['globalPlaylists'] = array();
+		foreach ($playlists as &$playlist) {
+			$channelId = $playlist['snippet']['channelId'];
+			$date = $playlist['snippet']['publishedAt'];
+			$time = explode('T', $date);
+			$date = $time[0];
+			$time = $time[1];
+			$date = explode('-', $date);
+			$time = explode('.', $time);
+			$params = array();
+			$playlist['ID'] = $params['ID'] = isset($playlist['id']) && isset($playlist['id'])
+				? $playlist['id']
+				: $playlist['id'];
+			$playlist['IMG'] = $params['IMG'] = $playlist['snippet']['thumbnails']['default']['url'];
+			$playlist['TITLE'] = $params['TITLE'] = $playlist['snippet']['title'];
+			$playlist['MONTH'] = $params['MONTH'] = AnyTV_Helpers::numToMonth((int)$date[1]);
+			$playlist['DAY'] = $params['DAY'] = $date[2];
+			$playlist['YEAR'] = $params['YEAR'] = $date[0];
+			$playlist['TIME'] = $params['TIME'] = $time[0];
+			$playlist['DETAILS'] = $params['DETAILS'] = str_replace('\n', '<br />', $playlist['snippet']['description']);
+			$playlist['SEARCH'] = $params['SEARCH'] = $search;
 
+			$response->params['globalPlaylists'][$params['ID']] = $params;
+			$i++;
+		}
+		
 		$response->params['videos'] = $videos;
+		$response->params['playlists'] = $playlists;
 		$response->params['totalVideos'] = AnyTV_Games::getVideos($games[$game]['name'], 0, 0, true);
 		$response->params['globalVideos'] = json_encode($response->params['globalVideos']);
+		$response->params['globalPlaylists'] = json_encode($response->params['globalPlaylists']);
 
+		/*echo "<pre>";
+        print_r($response);
+        exit;*/
         if(isset($_GET['ajax'])) {
         	die(json_encode($videos));
         }
@@ -118,6 +149,25 @@ class AnyTV_Games
         return iterator_to_array($videos);
 	}
 
+	public static function getPlaylist($game) {
+		$host = XenForo_Application::get('db')->getConfig()['host'];
+   		$m = new MongoClient($host); // connect
+        $db = $m->selectDB("asiafreedom_youtubers");
+
+    	$tags = AnyTV_Games::getTagsById($game);
+		$tags = explode(',', $tags);
+		foreach ($tags as $key => $value)
+			$tags[$key] = new MongoRegex("/^".rtrim(ltrim($value))."/i");
+
+		$playlists = $db->playlists
+            ->find(
+				array( 'snippet.tags' => array('$in' => $tags) )
+            )->sort(
+            	array('snippet.publishedAt'=>-1)
+            );
+        return iterator_to_array($playlists);
+	}
+
 	public static function getFeatured() {
 		$mydb = XenForo_Application::get('db');
         $featured = $mydb->fetchAll("
@@ -145,8 +195,9 @@ class AnyTV_Games
 			SELECT tags
 			FROM `anytv_game_tags`
 			WHERE `game_id` ='".$game_id."'");
-
-        return $tags[0]['tags'];
+        
+        if($tags) return $tags[0]['tags'];
+		else $tags;
 	}
 
 	public static function getGames($filter = array(), $featuredIds = array()) {
