@@ -8,7 +8,7 @@ class AnyTV_Games
 		$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? $_GET['limit'] : 0;
 		$offset = isset($_GET['offset']) && is_numeric($_GET['offset']) ? $_GET['offset'] : 0;
 		$games = AnyTV_Games::getGames();
-		$videos = AnyTV_Games::getVideos($games[$game]['name'], $limit, $offset);
+		$videos = AnyTV_Games::getVideos($games[$game]['name'], $limit, $offset, false, isset($game[$game]['id']));
 		$options = $options = XenForo_Application::get('options');
         $response->params['option'] = array('profile' => $options->facebookLink);
 		$response->templateName = 'anytv_games_page';
@@ -76,28 +76,45 @@ class AnyTV_Games
 		$response->params['games'] = $games;
 	}
 
-	public static function getVideos($game, $limit=0, $offset=0, $count = false) {
+	public static function getVideos($game, $limit=0, $offset=0, $count = false, $id=null) {
 		$host = XenForo_Application::get('db')->getConfig()['host'];
    		$m = new MongoClient($host); // connect
         $db = $m->selectDB("asiafreedom_youtubers");
-        $videos = $db->videos
-            ->find(
-            	array('snippet.title' => array('$regex' => $game))
-            )->sort(
-            	array('snippet.publishedAt'=>-1)
-            )->limit($limit)
-           ->skip($offset);
+        if (isset($id)) {
+        	$tags = AnyTV_Games::getTagsById($game);
+			$tags = explode(',', $tags);
+			foreach ($tags as $key => $value)
+				$tags[$key] = new MongoRegex("/^".rtrim(ltrim($value))."/i");
 
-          if($count) {
-              return $db->videos->count(
-                  array(
-                      'snippet.title' => array(
-                          '$regex' => $game
-                      )
-                  )
-              );
-          }
+			$videos = $db->videos
+	            ->find(
+	        		array(
+	        			'$or' => array(
+							array( 'snippet.title' => array('$regex' => new MongoRegex("/^".$game."/i")) ),
+							array( 'snippet.meta.tags' => array('$in' => $tags) )
+						)
+	            	)
+	            )->sort(
+	            	array('snippet.publishedAt'=>-1)
+	            )->limit($limit)
+	           ->skip($offset);
+        } else{
+        	$videos = $db->videos
+	            ->find(
+	        		array( 'snippet.title' => array('$regex' => new MongoRegex("/^".$game."/i")) )		
+	            )->sort(
+	            	array('snippet.publishedAt'=>-1)
+	            )->limit($limit)
+	           ->skip($offset);
+        }
 
+      	if($count) {
+          	return $db->videos->count(
+              	array(
+                  	'snippet.title' => array( '$regex' => $game)
+              )
+          );
+      	}
         return iterator_to_array($videos);
 	}
 
@@ -120,6 +137,16 @@ class AnyTV_Games
 			FROM `anytv_game_tags`");
 
         return $tags;
+	}
+
+	public static function getTagsById($game_id) {
+		$mydb = XenForo_Application::get('db');
+        $tags = $mydb->fetchAll("
+			SELECT tags
+			FROM `anytv_game_tags`
+			WHERE `game_id` ='".$game_id."'");
+
+        return $tags[0]['tags'];
 	}
 
 	public static function getGames($filter = array(), $featuredIds = array()) {
