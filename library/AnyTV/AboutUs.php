@@ -51,7 +51,7 @@ class AnyTV_AboutUs
             $clientId = '556525497714-ci74k99ts0ar37fo5pv0b5ea28es2reg.apps.googleusercontent.com';
             $clientSecret = 'RDqts1yS-MMG2fREcOWIzZgk';
 	        //$path = '/Users/Public/log.txt';
-	        $path = '/Library/WebServer/Documents/asiafreedom/zh/log.txt';
+	        $path = __DIR__.'/../../log.txt';
             foreach ($lists as $key => $value) {
                 $access=null;
 				file_put_contents($path, ":\n\r\n: =====================================START LOOP===============================================", FILE_APPEND);
