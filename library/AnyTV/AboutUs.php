@@ -35,7 +35,7 @@ class AnyTV_AboutUs
         }
 		/*
 			code for the cron job actually
-		 */sssssss
+		 */
 		if(isset($_GET['cache'])) {
 			ini_set('max_execution_time', 0);
 			$fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
