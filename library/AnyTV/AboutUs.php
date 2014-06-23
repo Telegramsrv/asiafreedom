@@ -35,7 +35,7 @@ class AnyTV_AboutUs
         }
 		/*
 			code for the cron job actually
-		 */
+		 */sssssss
 		if(isset($_GET['cache'])) {
 			ini_set('max_execution_time', 0);
 			$fieldModel = XenForo_Model::create('AnyTV_Models_CustomUserFieldModel');
@@ -97,7 +97,7 @@ class AnyTV_AboutUs
 				foreach($items as $item){
 					$requestUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id="
 						.$item['snippet']['resourceId']['videoId']."&fields=items(snippet(channelId%2Ctags)%2C+statistics)"
-						.($hasAccess ? "&access_token=".$value['access_token'] : "&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50");
+						.($hasAccess ? "&access_token=".$access['access_token'] : "&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50");
 
 					file_put_contents($path, ":\n\r\n: REQUEST ".++$videoCount.": ".$requestUrl, FILE_APPEND);
 

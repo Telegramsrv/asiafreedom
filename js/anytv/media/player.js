@@ -339,8 +339,9 @@ var getVideos = function(link, search) {
 	if(!search) {
 		search = 0;
 	}
+			console.log(link);
 	$.getJSON(link,
-		function(e) { 
+		function(e) {
 			var videos = e.items;
 			var html = '';
 			if(videos.length < 1) {
