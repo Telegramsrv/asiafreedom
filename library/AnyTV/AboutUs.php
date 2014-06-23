@@ -25,7 +25,11 @@ class AnyTV_AboutUs
             $client->setRedirectUri("http://".$_SERVER['SERVER_NAME']);
             $client->setClientId('556525497714-ci74k99ts0ar37fo5pv0b5ea28es2reg.apps.googleusercontent.com');
             $client->setClientSecret('RDqts1yS-MMG2fREcOWIzZgk');
-            $client->setRedirectUri('http://'.$_SERVER['SERVER_NAME'].'/zh/index.php?account/user-field-category&user_field_category_id=2');
+            $client->setRedirectUri((isset($_POST['redirect']) 
+            	? $_POST['redirect']
+            	: 'http://'.$_SERVER['SERVER_NAME']
+            		.'/zh/index.php?account/user-field-category&user_field_category_id=2'
+            ));
             $auth = $client->authenticate($_POST['code']);
             $token = $client->getAccessToken();
             if($token) {

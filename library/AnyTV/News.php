@@ -7,6 +7,9 @@ class AnyTV_News
         XenForo_ControllerResponse_View $response
     ) {
 		$options = $options = XenForo_Application::get('options');
+		echo "<pre>";
+		print_r($options);
+		exit;
 		$response->templateName = 'anytv_news_page';
 		$response->params['games'] = AnyTV_Games::getGames();
         $response->params['option'] = array('profile' => $options->facebookLink);
