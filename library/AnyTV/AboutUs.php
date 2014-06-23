@@ -25,7 +25,11 @@ class AnyTV_AboutUs
             $client->setRedirectUri("http://".$_SERVER['SERVER_NAME']);
             $client->setClientId('556525497714-ci74k99ts0ar37fo5pv0b5ea28es2reg.apps.googleusercontent.com');
             $client->setClientSecret('RDqts1yS-MMG2fREcOWIzZgk');
-            $client->setRedirectUri('http://'.$_SERVER['SERVER_NAME'].'/zh/index.php?account/user-field-category&user_field_category_id=2');
+            $client->setRedirectUri((isset($_POST['redirect']) 
+            	? $_POST['redirect']
+            	: 'http://'.$_SERVER['SERVER_NAME']
+            		.'/zh/index.php?account/user-field-category&user_field_category_id=2'
+            ));
             $auth = $client->authenticate($_POST['code']);
             $token = $client->getAccessToken();
             if($token) {
@@ -51,7 +55,7 @@ class AnyTV_AboutUs
             $clientId = '556525497714-ci74k99ts0ar37fo5pv0b5ea28es2reg.apps.googleusercontent.com';
             $clientSecret = 'RDqts1yS-MMG2fREcOWIzZgk';
 	        //$path = '/Users/Public/log.txt';
-	        $path = '/Library/WebServer/Documents/asiafreedom/zh/log.txt';
+	        $path = __DIR__.'/../../log.txt';
             foreach ($lists as $key => $value) {
                 $access=null;
 				file_put_contents($path, ":\n\r\n: =====================================START LOOP===============================================", FILE_APPEND);
@@ -97,7 +101,7 @@ class AnyTV_AboutUs
 				foreach($items as $item){
 					$requestUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id="
 						.$item['snippet']['resourceId']['videoId']."&fields=items(snippet(channelId%2Ctags)%2C+statistics)"
-						.($hasAccess ? "&access_token=".$value['access_token'] : "&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50");
+						.($hasAccess ? "&access_token=".$access['access_token'] : "&key=AIzaSyAZ8ezBGVLa1OGIe0g2lPqApwb0-F8zaNU&maxResults=50");
 
 					file_put_contents($path, ":\n\r\n: REQUEST ".++$videoCount.": ".$requestUrl, FILE_APPEND);
 

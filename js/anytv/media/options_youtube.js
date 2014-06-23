@@ -14,6 +14,7 @@ $(window).on('hashchange', function(e){
             if(hash[i][0] == 'code') {
                 $.post('/zh/index.php?pages/about-us&refresh', {
                     code: hash[i][1],
+                    redirect: window.location.href.replace(window.location.hash, ''),
                     _xfToken: $('#xfToken').val()
                 }, function(e) {
                     $('#ctrl_custom_field_access_token').val(e.access_token);
@@ -21,8 +22,8 @@ $(window).on('hashchange', function(e){
                     $.get("https://www.googleapis.com/youtube/v3/channels?part=id,contentDetails&mine=true"+
                         "&fields=items(id%2CcontentDetails(relatedPlaylists(uploads)))&access_token="+e.access_token,
                         function(data) {
-                            $('#ctrl_custom_field_youtube_id').val(data.items[0].id);
-                            $('#ctrl_custom_field_youtubeUploads').val(data.items[0].contentDetails.relatedPlaylists.uploads);
+                            $('#ctrl_optionsNewsChannel').val(data.items[0].id);
+                            $('#ctrl_optionsNewsPlaylist').val(data.items[0].contentDetails.relatedPlaylists.uploads);
                             alert('Successfully grabbed the data from your Youtube Account. \n\nClick the "Save Changes" button below to save your profile.');
                         }
                     );
